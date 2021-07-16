@@ -1,0 +1,33 @@
+package com.all.login;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.all.member.MemberVO;
+import com.all.utill.ConnectionDB;
+
+public class LoginDAO {
+	
+	public boolean userCheck(MemberVO memVo) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT 1");
+		sql.append("  FROM MEMBER");
+		sql.append(" WHERE MEM_ID = ?");
+		sql.append("   AND MEM_PW = ?");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+		ps.setString(1, memVo.getId());
+		ps.setString(2, memVo.getPw());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		if(rs.next()) {
+			return true;
+		}
+		return false;
+	}
+}

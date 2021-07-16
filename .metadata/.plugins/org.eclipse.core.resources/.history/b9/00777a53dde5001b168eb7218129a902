@@ -1,0 +1,33 @@
+package com.all.monsters;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.all.market.MarketVO;
+import com.all.utill.ConnectionDB;
+
+public class MonstersDAO {
+	
+	public List<MonsterVO> showMonsterList() throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT *");
+		sql.append("  FROM MONSTERS");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		List<MonsterVO> list = new ArrayList<>();
+		while(rs.next()) {
+			
+			list.add();
+		}
+		
+		return list;
+	}
+}

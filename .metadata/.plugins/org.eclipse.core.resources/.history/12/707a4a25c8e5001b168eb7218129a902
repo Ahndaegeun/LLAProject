@@ -1,0 +1,11 @@
+package com.all.inventory;
+
+import com.all.member.MemberVO;
+
+public class InventoryDAO {
+	public boolean insertItem(MemberVO) {
+		
+		
+		retrun false;
+	}
+}

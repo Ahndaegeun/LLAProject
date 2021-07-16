@@ -1,0 +1,9 @@
+package com.all.market;
+
+import java.util.List;
+
+public class MarketDAO {
+	public List<MarketVO> showMarketList() {
+		
+	}
+}

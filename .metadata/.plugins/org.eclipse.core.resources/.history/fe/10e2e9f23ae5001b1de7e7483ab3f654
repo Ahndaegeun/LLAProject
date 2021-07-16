@@ -1,0 +1,10 @@
+package com.all.signup;
+
+public class Test {
+	public static void main(String[] args) {
+		System.out.println("캐릭터 리스트");
+		System.out.println("1. 당근 / 2 / 모험가");
+		System.out.println("2. 상추 / 2 / 모험가");
+		System.out.println("3. 배추 / 2 / 모험가");
+	}
+}

@@ -1,0 +1,37 @@
+package com.all.inventory;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import com.all.utill.ConnectionDB;
+
+public class InventoryDAO {
+	public boolean insertItem(InventoryVO vo) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO INVENTORY VALUES (");
+		sql.append("	'ITEM_NM',");
+		sql.append("	'CHAR_IDX',");
+		sql.append("	'ITEM_CO'");
+		sql.append(")");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+		ps.setString(1, vo.getItemName());
+		ps.setInt(2, vo.getCharIdx());
+		ps.setInt(3, vo.getItemCo());
+		
+		if(ps.executeUpdate() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public List<InventoryVO> showInventory() {
+		tringBuilder sql = new StringBuilder();
+		sql.append("");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+	}
+}

@@ -1,0 +1,32 @@
+package com.all.market;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import com.all.utill.ConnectionDB;
+
+public class MarketDAO {
+	public List<MarketVO> showMarketList() throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT *");
+		sql.append("  FROM INVENTORY");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		List<MarketVO> list = new ArrayList<>();
+		while(rs.next()) {
+			String itemName = rs.getString("ITEM_NM");
+			int charIdx = rs.getInt("CHAR_IDX");
+			int itemCo = rs.getInt("ITEM_CO");
+		}
+		
+		return list;
+	}
+}

@@ -1,0 +1,58 @@
+package com.all.login;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.all.member.MemberVO;
+import com.all.utill.ConnectionDB;
+
+public class SearchInfo {
+	
+	public String findId(MemberVO memVo) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT MEM_ID");
+		sql.append("  FROM MEMBER");
+		sql.append(" WHERE MEM_NM = ?");
+		sql.append("   AND MEM_REGNO = ?");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+		ps.setString(1, memVo.getName());
+		ps.setString(2, memVo.getRegno());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		if(rs.next()) {
+			return rs.getString("MEM_ID");
+		}
+		
+		return null;
+	}
+	
+	public boolean resetPw(MemberVO memVo) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE MEMBER");
+		sql.append("      SET MEM_PW = MEM_REGNO");
+		sql.append("    WHERE MEM_ID = ?");
+		sql.append("	  AND MEM_NM = ?");
+		sql.append("	  AND MEM_REGNO = ?");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+		ps.setString(1, memVo.getId());
+		ps.setString(2, memVo.getName());
+		ps.setString(3, memVo.getRegno());
+		
+		int result = ps.executeUpdate();
+		
+		if(result > 0) {
+			return true;
+		}
+		return false;
+	}
+}

@@ -1,0 +1,26 @@
+package com.all.signup;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.all.member.MemberVO;
+import com.all.utill.ConnectionDB;
+
+public class SignupDAO {
+
+	public boolean idCheck(MemberVO memVo) throws Exception {
+		String sql = "SELECT 1 FROM MEMBER WHERE MEM_ID = ?";
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, memVo.getId());
+		ResultSet rs = ps.executeQuery();
+		
+		if(rs.next()) {
+			return true;
+		}
+		return false;
+	}
+}

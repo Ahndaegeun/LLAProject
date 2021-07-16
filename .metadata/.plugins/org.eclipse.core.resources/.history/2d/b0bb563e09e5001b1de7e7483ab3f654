@@ -1,0 +1,44 @@
+package com.all.character;
+
+public class CharacterVO {
+	private int idx;
+	private String name;
+	private int hp;
+	private int maxHp;
+	private int mp;
+	private int maxMp;
+	private int level;
+	private int exe;
+	private int maxExe;
+	private int att;
+	private int def;
+	private String weapon;
+	private String armor;
+	private int gold;
+	private String userId;
+	private String job;
+	private int floor;
+	public CharacterVO(int idx, String name, int hp, int maxHp, int mp, int maxMp, int level, int exe, int maxExe,
+
+			int att, int def, String weapon, String armor, int gold, String userId, String job, int floor) {
+		this.idx = idx;
+		this.name = name;
+		this.hp = hp;
+		this.maxHp = maxHp;
+		this.mp = mp;
+		this.maxMp = maxMp;
+		this.level = level;
+		this.exe = exe;
+		this.maxExe = maxExe;
+		this.att = att;
+		this.def = def;
+		this.weapon = weapon;
+		this.armor = armor;
+		this.gold = gold;
+		this.userId = userId;
+		this.job = job;
+		this.floor = floor;
+	}
+	
+	
+}

@@ -1,0 +1,37 @@
+package com.all.monsters;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import com.all.utill.ConnectionDB;
+
+public class MonstersDAO {
+	
+	public List<MonstersVO> showMonsterList() throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT *");
+		sql.append("  FROM MONSTERS");
+		
+		ConnectionDB instance = ConnectionDB.getInstance();
+		Connection conn = instance.getConnection();
+		PreparedStatement ps = conn.prepareStatement(sql.toString());
+		
+		ResultSet rs = ps.executeQuery();
+		
+		List<MonstersVO> list = new ArrayList<>();
+		while(rs.next()) {
+			String monNm = rs.getString("MON_NM");
+			int momHp = rs.getInt("MON_HP");
+			int momAtt = rs.getInt("MON_ATT");
+			int momDef = rs.getInt("MON_DEF");
+			int momGold = rs.getInt("MON_GOLD");
+			int momLev = rs.getInt("MON_LEV");
+			String itemNm = rs.getString("ITEM_NM");
+			list.add(new MonstersVO(monNm, momHp, momAtt, momDef, momGold, momLev, itemNm));
+		}
+		return list;
+	}
+	
+}
