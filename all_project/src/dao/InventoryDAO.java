@@ -1,16 +1,21 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import util.ConnectionDB;
-
+import util.JDBCUtil;
 import vo.InventoryVO;
 
 public class InventoryDAO {
+	private InventoryDAO() {}
+	private static InventoryDAO intance;
+	public static InventoryDAO getInvetoryDAO() {
+		if(intance == null) {
+			intance = new InventoryDAO();
+		}
+		return intance;
+	}
 	
 	public boolean insertItem(InventoryVO vo) throws Exception {
 		StringBuilder sql = new StringBuilder();
@@ -20,14 +25,14 @@ public class InventoryDAO {
 		sql.append("	?");
 		sql.append(")");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, vo.getItemName());
-		ps.setInt(2, vo.getCharIdx());
-		ps.setInt(3, vo.getItemCo());
-		
-		if(ps.executeUpdate() > 0) {
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getItemName());
+		list.add(vo.getCharIdx());
+		list.add(vo.getItemCo());
+
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+
+		if(result > 0) {
 			return true;
 		}
 		return false;
@@ -39,38 +44,35 @@ public class InventoryDAO {
 		sql.append("  FROM INVENTORY");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getCharIdx());
+		List<Map<String, Object>> map = JDBCUtil.getInstance().selectList(sql.toString(), list);
+		List<InventoryVO> result = new ArrayList<>();
 		
-		ResultSet rs = ps.executeQuery();
-		
-		List<InventoryVO> list = new ArrayList<>();
-		while(rs.next()) {
-			String itemName = rs.getString("ITEM_NM");
-			int charIdx = rs.getInt("CHAR_IDX");
-			int itemCo = rs.getInt("ITEM_CO");
-			list.add(new InventoryVO(itemName, charIdx, itemCo));
+		for(int i = 0; i < map.size(); i++) {
+			InventoryVO inven = new InventoryVO((String)map.get(i).get("ITEM_NM"), (Integer)map.get(i).get("CHAR_IDX"),
+					(Integer)map.get(i).get("ITEM_CO"));
+			result.add(inven);
 		}
 		
-		return list;
+		return result;
 	}
 	
 	public boolean useItemMinus(InventoryVO vo) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE INVENTORY");
-		sql.append("   SET ITEM_CO = ITEM_CO - 1");
+		sql.append("   SET ITEM_CO = ?");
 		sql.append(" WHERE CHAR_IDX = ?");
 		sql.append("   AND ITEM_NM = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
-		ps.setString(2, vo.getItemName());
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getItemCo() - 1);
+		list.add(vo.getCharIdx());
+		list.add(vo.getItemName());
 		
-		if(ps.executeUpdate() > 0) {
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		
+		if(result > 0) {
 			return true;
 		}
 		return false;
@@ -82,13 +84,13 @@ public class InventoryDAO {
 		sql.append(" WHERE CHAR_IDX = ?");
 		sql.append("   AND ITEM_NM = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
-		ps.setString(2, vo.getItemName());
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getCharIdx());
+		list.add(vo.getItemName());
 		
-		if(ps.executeUpdate() > 0) {
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		
+		if(result > 0) {
 			return true;
 		}
 		return false;
@@ -105,15 +107,16 @@ public class InventoryDAO {
 		sql.append("													  WHERE I.ITEM_NM = IV.ITEM_NM");
 		sql.append("													    AND IV.CHAR_IDX = C.CHAR_IDX");
 		sql.append("													    AND IV.CHAR_IDX = ?)");
-		sql.append("	 WHERE CHAR_IDX = ?;");
+		sql.append("	 WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
-		ps.setInt(2, vo.getCharIdx());
 		
-		if(ps.executeUpdate() > 0) {
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getCharIdx());
+		list.add(vo.getCharIdx());
+		
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		
+		if(result > 0) {
 			return true;
 		}
 		return false;
@@ -131,13 +134,13 @@ public class InventoryDAO {
 		sql.append("												    AND IV.CHAR_IDX = ?)");
 		sql.append("	 WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
-		ps.setInt(2, vo.getCharIdx());
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getCharIdx());
+		list.add(vo.getCharIdx());
+
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
 		
-		if(ps.executeUpdate() > 0) {
+		if(result > 0) {
 			return true;
 		}
 		return false;
@@ -155,50 +158,15 @@ public class InventoryDAO {
 		sql.append("												   AND IV.CHAR_IDX = ?)");
 		sql.append("	 WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
-		ps.setInt(2, vo.getCharIdx());
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getCharIdx());
+		list.add(vo.getCharIdx());
+
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
 		
-		if(ps.executeUpdate() > 0) {
+		if(result > 0) {
 			return true;
 		}
 		return false;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

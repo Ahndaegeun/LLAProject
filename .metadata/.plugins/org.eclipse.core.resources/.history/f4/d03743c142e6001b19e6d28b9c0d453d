@@ -1,0 +1,25 @@
+package controller;
+
+import util.ScanUtil;
+
+public class LoginController {
+	private LoginController() {}
+	
+	private static LoginController intance ;
+	
+	public static LoginController getLoginController() {
+		if(intance == null) {
+			intance = new LoginController();
+		}
+		return intance;
+	}
+	
+	public void login() {
+		System.out.print("ID >> ");
+		String id = ScanUtil.nextLine();
+		System.out.print("PW >> ");
+		String pw = ScanUtil.nextLine();
+		
+		
+	}
+}

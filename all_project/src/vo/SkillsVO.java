@@ -14,6 +14,8 @@ public class SkillsVO {
 		this.skillLev = skillLev;
 		this.job = job;
 	}
+	
+	public SkillsVO () {}
 
 	public String getSkillNm() {
 		return skillNm;

@@ -1,14 +1,23 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
-
+import util.JDBCUtil;
 import vo.MemberVO;
-import util.ConnectionDB;
 
 public class LoginDAO {
+	private LoginDAO() {}
+	private static LoginDAO instance;
+	public static LoginDAO getLoginDAO() {
+		if(instance == null) {
+			instance = new LoginDAO();
+		}
+		return instance;
+	}
+	
+	JDBCUtil util = JDBCUtil.getInstance();
 	
 	public boolean userCheck(MemberVO memVo) throws Exception {
 		StringBuilder sql = new StringBuilder();
@@ -17,18 +26,13 @@ public class LoginDAO {
 		sql.append(" WHERE MEM_ID = ?");
 		sql.append("   AND MEM_PW = ?");
 		
+		List<Object> list = new ArrayList<>();
+		list.add(memVo.getId());
+		list.add(memVo.getPw());
 		
+		Map<String, Object> result = util.selectOne(sql.toString(), list);
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, memVo.getId());
-		ps.setString(2, memVo.getPw());
-		
-		ResultSet rs = ps.executeQuery();
-		
-		if(rs.next()) {
+		if(result != null) {
 			return true;
 		}
 		return false;
@@ -46,14 +50,11 @@ public class LoginDAO {
 		sql.append("   SET MEM_PW = ?");
 		sql.append(" WHERE MEM_ID = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
+		List<Object> list = new ArrayList<>();
+		list.add(pw);
+		list.add(id);
 		
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, pw);
-		ps.setString(2, id);
-		
-		int result = ps.executeUpdate();
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
 		
 		if(result > 0) {
 			return true;

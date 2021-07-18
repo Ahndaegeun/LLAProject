@@ -1,0 +1,11 @@
+package service;
+
+public class LoginService {
+	private LoginServiece() {}
+	
+	private static LoginServiece instance;
+	
+	public static LoginServiece getLoginService() {
+		
+	}
+}

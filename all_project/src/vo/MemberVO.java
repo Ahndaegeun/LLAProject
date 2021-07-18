@@ -12,6 +12,18 @@ public class MemberVO {
 		this.name = name;
 		this.regno = regno;
 	}
+	
+	public MemberVO() {
+	}
+	public MemberVO(String id) {
+		this.id = id;
+	}
+	
+	public MemberVO(String id, String pw) {
+		super();
+		this.id = id;
+		this.pw = pw;
+	}
 
 	public String getId() {
 		return id;

@@ -1,0 +1,14 @@
+package service;
+
+public class LoginService {
+	private LoginService() {}
+	
+	private static LoginService instance;
+	
+	public static LoginService getLoginService() {
+		if(instance == null) {
+			instance = new LoginService();
+		}
+		return instance;
+	}
+}

@@ -20,7 +20,11 @@ public class CharacterVO {
 	private int floor;
 	
 	
-
+	public CharacterVO() {}
+	public CharacterVO(String charName, String memId) {
+		this.charName = charName;
+		this.memId = memId;
+	}
 	
 
 	public CharacterVO(int charIdx, String charName, int charLevel, String memId, String job) {

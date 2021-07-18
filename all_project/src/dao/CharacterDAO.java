@@ -1,16 +1,28 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import util.ConnectionDB;
-
+import util.JDBCUtil;
 import vo.CharacterVO;
+import vo.MemberVO;
+import vo.SkillsVO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class CharacterDAO {
+	private List<Object> list = new ArrayList<>();
+	private JDBCUtil jdbc = JDBCUtil.getInstance();
+	private int result;
+	
+	private static CharacterDAO instance;
+	private CharacterDAO() {}
+	public static CharacterDAO getCharacterDAO() {
+		if(instance == null) {
+			instance = new CharacterDAO();
+		}
+		return instance;
+	}
 	
 	public boolean createCharacter(CharacterVO charVo) throws Exception {
 		StringBuilder sql = new StringBuilder();
@@ -28,15 +40,13 @@ public class CharacterDAO {
 		sql.append("		?");
 		sql.append("	)");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, charVo.getCharName());
-		ps.setString(2, charVo.getMemId());
-		ps.setString(3, charVo.getJob());
-		ps.setInt(4, charVo.getFloor());
+		list.add(charVo.getCharName());
+		list.add(charVo.getMemId());
+		list.add(charVo.getJob());
+		list.add(charVo.getFloor());
 		
-		int result = ps.executeUpdate();
+		result = jdbc.update(sql.toString(), list);
+		
 		if(result > 0) {
 			return true;
 		}
@@ -49,13 +59,11 @@ public class CharacterDAO {
 		sql.append(" WHERE MEM_ID = ?");
 		sql.append("   AND CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, charVo.getMemId());
-		ps.setInt(2, charVo.getCharIdx());
+		list.add(charVo.getMemId());
+		list.add(charVo.getCharIdx());
 		
-		int result = ps.executeUpdate();
+		result = jdbc.update(sql.toString(), list);
+		
 		
 		if(result > 0) {
 			return true;
@@ -63,107 +71,53 @@ public class CharacterDAO {
 		return false;
 	}
 	
-	public List<CharacterVO> showCharacter() throws Exception {
-		List<CharacterVO> list = new ArrayList<>();
+	public List<CharacterVO> showAllCharacter(MemberVO vo) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT CHAR_NM,");
-		sql.append("	   CHAR_LEV,");
-		sql.append("	   JOB,");
-		sql.append("	   CHAR_IDX,");
-		sql.append("	   MEM_ID");
-		sql.append("  FROM CHARACTERS");
+		sql.append("	            CHAR_LEV,");
+		sql.append("	            JOB,");
+		sql.append("	            CHAR_IDX,");
+		sql.append("	            MEM_ID");
+		sql.append("   FROM CHARACTERS");
+		sql.append(" WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ResultSet rs = ps.executeQuery();
+		list.add(vo.getId());
 		
-		while(rs.next()) {
-			int idx = rs.getInt("CHAR_IDX");
-			String name = rs.getString("CHAR_NM");
-			int lev = rs.getInt("CHAR_LEV");
-			String job = rs.getString("JOB");
-			String memId = rs.getString("MEM_ID");
-			list.add(new CharacterVO(idx, name, lev, job, memId));
+		List<Map<String, Object>> result = jdbc.selectList(sql.toString(), list);
+		List<CharacterVO> charList = new ArrayList<>();
+		
+		for(int i = 0; i < result.size(); i++) {
+			CharacterVO character = new CharacterVO();
+			character.setCharName((String)result.get(i).get("CHAR_NM"));
+			character.setCharLevel((Integer)result.get(i).get("CHAR_LEV"));
+			character.setJob((String)result.get(i).get("JOB"));
+			character.setCharIdx((Integer)result.get(i).get("CHAR_IDX"));
+			character.setMemId((String)result.get(i).get("MEM_ID"));
+			charList.add(character);
 		}
 		
-		
-		return list;
+		return charList;
 	}
 	
-	public List<CharacterVO> showCharacter(String userId) throws Exception {
-		List<CharacterVO> list = new ArrayList<>();
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT *");
-		sql.append("  FROM CHARACTERS");
-		sql.append(" WHERE MEM_ID = ?");
-		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, userId);
-		
-		ResultSet rs = ps.executeQuery();
-		
-		while(rs.next()) {
-			int charIdx = rs.getInt("CHAR_IDX");
-			String charName = rs.getString("CHAR_NM");
-			int charHp = rs.getInt("CHAR_HP");
-			int charMaxHp = rs.getInt("CHAR_MAX_HP");
-			int charMp = rs.getInt("CHAR_MP");
-			int charMaxMp = rs.getInt("CHAR_MAX_MP");
-			int charLevel = rs.getInt("CHAR_LEV");
-			int charExe = rs.getInt("CHAR_EXE");
-			int charMaxExe = rs.getInt("CHAR_MAX_EXE");
-			int charAtt = rs.getInt("CHAR_ATT");
-			int charDef = rs.getInt("CHAR_DEF");
-			String charWeapon = rs.getString("CHAR_WEAPON");
-			String charArmor = rs.getString("CHAR_ARMOR");
-			int charGold = rs.getInt("CHAR_GOLD");
-			String memId = rs.getString("MEM_ID");
-			String job = rs.getString("JOB");
-			int floor = rs.getInt("FLOOR");
-			list.add(new CharacterVO(charIdx, charName, charHp, charMaxHp, charMp, charMaxMp, charLevel, charExe, charMaxExe, charAtt, charDef, charWeapon, charArmor, charGold, memId, job, floor));
-		}
-		
-		return list;
-	}
-	
-	public CharacterVO showCharacterInfo(int idx) throws Exception {
+	public CharacterVO showCharacterInfo(CharacterVO vo) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT *");
 		sql.append("  FROM CHARACTERS");
 		sql.append(" WHERE CHAR_IDX = ?");
+	
+		list.add(vo.getCharIdx());
+		Map<String, Object> map =  jdbc.selectOne(sql.toString(), list);
+		List<Object> keys = new ArrayList<>();
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, idx);
-		
-		ResultSet rs = ps.executeQuery();
-		
-		if(rs.next()) {
-			int charIdx = rs.getInt("CHAR_IDX");
-			String charName = rs.getString("CHAR_NM");
-			int charHp = rs.getInt("CHAR_HP");
-			int charMaxHp = rs.getInt("CHAR_MAX_HP");
-			int charMp = rs.getInt("CHAR_MP");
-			int charMaxMp = rs.getInt("CHAR_MAX_MP");
-			int charLevel = rs.getInt("CHAR_LEV");
-			int charExe = rs.getInt("CHAR_EXE");
-			int charMaxExe = rs.getInt("CHAR_MAX_EXE");
-			int charAtt = rs.getInt("CHAR_ATT");
-			int charDef = rs.getInt("CHAR_DEF");
-			String charWeapon = rs.getString("CHAR_WEAPON");
-			String charArmor = rs.getString("CHAR_ARMOR");
-			int charGold = rs.getInt("CHAR_GOLD");
-			String memId = rs.getString("MEM_ID");
-			String job = rs.getString("JOB");
-			int floor = rs.getInt("FLOOR");
-			
-			return new CharacterVO(charIdx, charName, charHp, charMaxHp, charMp, charMaxMp, charLevel, charExe, charMaxExe, charAtt, charDef, charWeapon, charArmor, charGold, memId, job, floor);
+		for(Map.Entry<String, Object> entry : map.entrySet()) {
+			keys.add(entry);
 		}
-		return null;
+
+		CharacterVO character = new CharacterVO((Integer)keys.get(0), (String)keys.get(1), (Integer)keys.get(2), (Integer)keys.get(3), (Integer)keys.get(4), 
+				(Integer)keys.get(5), (Integer)keys.get(6), (Integer)keys.get(7), (Integer)keys.get(8), (Integer)keys.get(9), (Integer)keys.get(10), (String)keys.get(11), 
+				(String)keys.get(12), (Integer)keys.get(13), (String)keys.get(14), (String)keys.get(15), (Integer)keys.get(16));
+		
+		return character;
 	}
 	
 	public boolean unEquippingWeapon(CharacterVO vo) throws Exception {
@@ -171,13 +125,9 @@ public class CharacterDAO {
 		sql.append("UPDATE CHARACTERS");
 		sql.append("	   SET CHAR_WEAPON = NULL");
 		sql.append("	 WHERE CHAR_IDX = ?");
-		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
-		
-		int result = ps.executeUpdate();
+
+		list.add(vo.getCharIdx());
+		result = jdbc.update(sql.toString(), list);
 		
 		if(result > 0) {
 			return true;
@@ -191,12 +141,8 @@ public class CharacterDAO {
 		sql.append("	   SET CHAR_ARMOR = NULL");
 		sql.append("	 WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharIdx());
-		
-		int result = ps.executeUpdate();
+		list.add(vo.getCharIdx());
+		result = jdbc.update(sql.toString(), list);
 		
 		if(result > 0) {
 			return true;
@@ -204,7 +150,6 @@ public class CharacterDAO {
 		return false;
 	}
 	
-	// 공격 받음
 	public boolean beingAtt(CharacterVO vo, double damage) throws Exception {
 		int newHp = (int)(vo.getCharHp() - (damage - vo.getCharDef()));
 		
@@ -213,33 +158,25 @@ public class CharacterDAO {
 		sql.append("   SET CHAR_HP = ?");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, newHp);
-		ps.setInt(2, vo.getCharIdx());
-		
-		int result = ps.executeUpdate();
+		list.add(newHp);
+		list.add(vo.getCharIdx());
+		result = jdbc.update(sql.toString(), list);
 		
 		if(result > 0) {
 			return true;
 		}
 		return false;
 	}
-	// 골드 획득
+
 	public boolean addGold(CharacterVO vo, int gold) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE CHARACTERS");
 		sql.append("   SET CHAR_GOLD = ?");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharGold() + gold);
-		ps.setInt(2, vo.getCharIdx());
-		
-		int result = ps.executeUpdate();
+		list.add(vo.getCharGold() + gold);
+		list.add(vo.getCharIdx());
+		result = jdbc.update(sql.toString(), list);
 		
 		if(result > 0) {
 			return true;
@@ -247,7 +184,6 @@ public class CharacterDAO {
 		return false;
 	}
 	
-	// 아이템 획득
 	public boolean addItem(CharacterVO vo, String item) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO INVENTORY VALUES (");
@@ -255,74 +191,59 @@ public class CharacterDAO {
 		sql.append(" 	?,");
 		sql.append(" 	1)");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, item);
-		ps.setInt(2, vo.getCharIdx());
-		
-		int result = ps.executeUpdate();
+		list.add(item);
+		list.add(vo.getCharIdx());
+		result = jdbc.update(sql.toString(), list);
 		
 		if(result > 0) {
 			return true;
 		}
 		return false;
 	}
-	// 기본공격
+
 	public double basicAtt(CharacterVO vo) {
 		double damage = vo.getCharAtt() * 1.2;
 		return damage;
 	}
 	
-	// 스킬 가져오기
-	public List<Integer> skillAtt(CharacterVO vo, String skillName) throws Exception {
+	public SkillsVO skillAtt(CharacterVO charVo, SkillsVO skillVo) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT S.SKILL_ATT,");
 		sql.append("	    S.SKILL_MP,");
-		sql.append("	    S.SKILL_LEV");
+		sql.append("	    S.SKILL_LEV,");
+		sql.append("	    S.SKILL_NM,");
+		sql.append("	    S.JOB");
 		sql.append("   FROM SKILLS S, CHARACTERS C");
 		sql.append("  WHERE S.JOB = C.JOB");
 		sql.append("    AND S.SKILL_NM = ?");
 		sql.append("    AND C.CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setString(1, skillName);
-		ps.setInt(2, vo.getCharIdx());
-		ResultSet rs = ps.executeQuery();
+		list.add(skillVo.getSkillNm());
+		list.add(charVo.getCharIdx());
+		Map<String, Object> result = jdbc.selectOne(sql.toString(), list);
 		
-		rs.next();
-		int att = rs.getInt("S.SKILL_ATT");
-		int mp = rs.getInt("S.SKILL_MP");
-		int lev = rs.getInt("S.SKILL_LEV");
-		List<Integer> list = new ArrayList<>();
-		list.add((int)(att * 1.2));
-		list.add(mp);
-		list.add(lev);
-		return list;
+		SkillsVO skill = new SkillsVO((String)result.get("S.SKILL_NM"), (Integer)result.get("S.SKILL_ATT"), (Integer)result.get("S.SKILL_MP"), 
+				(Integer)result.get("S.SKILL_LEV"),(String)result.get("S.JOB"));
+		
+		return skill;
 	}
 	
-	//스킬 사용 후 캐릭터 상태 변경
-	public boolean beforSkillUse(CharacterVO vo, List<Integer> list) throws Exception {
+	public boolean beforSkillUse(CharacterVO vo, SkillsVO skillVo) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE CHARACTERS");
 		sql.append("       SET CHAR_MP = ?");
 		sql.append("     WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, list.get(1));
-		ps.setInt(2, vo.getCharIdx());
+		list.add(vo.getCharMp() - skillVo.getSkillMp());
+		list.add(vo.getCharIdx());
+		result = jdbc.update(sql.toString(), list);
 		
-		if(ps.executeUpdate() > 0) {
+		if(result > 0) {
 			return true;
 		}
 		return false;
 	}
 	
-	//경험치 획득
 	public boolean getExe(CharacterVO vo, int exe) throws Exception {
 		int increaseExe = vo.getCharExe() + exe;
 		if(increaseExe >= vo.getCharMaxExe()) {
@@ -334,19 +255,16 @@ public class CharacterDAO {
 		sql.append("   SET CHAR_EXE = ?");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, vo.getCharExe() + exe);
-		ps.setInt(2, vo.getCharIdx());
+		list.add(vo.getCharMaxExe() + exe);
+		list.add(vo.getCharIdx());
+		result = jdbc.update(sql.toString(), list);
 		
-		if(ps.executeUpdate() > 0) {
+		if(result > 0) {
 			return true;
 		}
 		return false;
 	}
 	
-	//레벨업
 	public boolean levelUp(CharacterVO vo, int leftExe) throws Exception {
 		int newHp = (int)(vo.getCharMaxHp() * 1.3);
 		int newMp = (int)(vo.getCharMaxMp() * 1.2);
@@ -369,49 +287,33 @@ public class CharacterDAO {
 		sql.append("        CHAR_LEV) = (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		ps.setInt(1, newHp);
-		ps.setInt(2, newHp);
-		ps.setInt(3, newMp);
-		ps.setInt(4, newMp);
-		ps.setInt(5, newAtt);
-		ps.setInt(6, newDef);
-		ps.setInt(7, leftExe);
-		ps.setInt(8, newExe);
-		ps.setInt(9, nextLev);
-		ps.setInt(10, vo.getCharIdx());
+		list.add(newHp);
+		list.add(newHp);
+		list.add(newMp);
+		list.add(newMp);
+		list.add(newAtt);
+		list.add(newDef);
+		list.add(leftExe);
+		list.add(newExe);
+		list.add(nextLev);
+		list.add(vo.getCharIdx());
+		
+		result = jdbc.update(sql.toString(), list);
 
-		if(ps.executeUpdate() > 0) {
+		if(result > 0) {
 			return true;
 		}
 		return false;
 	}
 	
+	public boolean run() {
+		Random rnd = new Random();
+		int percent = rnd.nextInt(1);
+		if(percent == 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

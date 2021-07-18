@@ -1,0 +1,19 @@
+package controller;
+
+import java.util.List;
+import vo.MarketVO;
+
+public class MarketController {
+	private MarketController() {}
+	private static MarketController intance;
+	public static MarketController getController() {
+		if(intance == null) {
+			intance = new MarketController();
+		}
+		return intance;
+	}
+	
+	public List<MarketVO> name() {
+		
+	}
+}

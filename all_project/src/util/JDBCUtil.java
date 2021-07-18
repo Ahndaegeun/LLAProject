@@ -12,16 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public class JDBCUtil {
-	//╫л╠шеФ фпео : юн╫╨ео╫╨юг ╩Щ╪╨ю╩ а╕гяго©╘ гоЁ╙юг юн╫╨ео╫╨╦╦ ╩Г©Кго╢б ╣Пюзюн фпео
 	
-		private JDBCUtil(){
-			
-		}
-		
-		//юн╫╨ео╫╨╦╕ ╨╦╟Эгр ╨╞╪Ж
+		private JDBCUtil(){}
 		private static JDBCUtil instance;
-		
-		//юн╫╨ео╫╨╦╕ ╨Т╥ааж╢б ╦ч╪╜╣Е
 		public static JDBCUtil getInstance(){
 			if(instance == null){
 				instance = new JDBCUtil();
@@ -29,9 +22,8 @@ public class JDBCUtil {
 			return instance;
 		}
 		
-		//╣╔юлем╨ёюл╫╨ а╒╪с а╓╨╦
 		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String user = "JBP01";
+		String user = "all_project";
 		String password = "java";
 		
 		Connection con = null;
@@ -57,9 +49,9 @@ public class JDBCUtil {
 				
 				rs = ps.executeQuery();
 				
-				ResultSetMetaData md = rs.getMetaData(); //╦че╦╣╔юлем : ╣╔юлем©║ ╢Кгя ╣╔юлем
+				ResultSetMetaData md = rs.getMetaData(); //О©╫О©╫е╦О©╫О©╫О©╫О©╫О©╫О©╫ : О©╫О©╫О©╫О©╫О©╫м©О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
 				
-				int columnCount = md.getColumnCount(); //дц╥Ё ╪Ж
+				int columnCount = md.getColumnCount(); //О©╫ц╥О©╫ О©╫О©╫
 				
 				while(rs.next()){
 					row = new HashMap<>();
@@ -92,9 +84,9 @@ public class JDBCUtil {
 				}
 				rs = ps.executeQuery();
 				
-				ResultSetMetaData md = rs.getMetaData(); //╦че╦╣╔юлем : ╣╔юлем©║ ╢Кгя ╣╔юлем
+				ResultSetMetaData md = rs.getMetaData(); //О©╫О©╫е╦О©╫О©╫О©╫О©╫О©╫О©╫ : О©╫О©╫О©╫О©╫О©╫м©О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
 				
-				int columnCount = md.getColumnCount(); //дц╥Ё ╪Ж
+				int columnCount = md.getColumnCount(); //О©╫ц╥О©╫ О©╫О©╫
 				
 				while(rs.next()){
 					row = new HashMap<>();
@@ -105,7 +97,7 @@ public class JDBCUtil {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			} finally {
 				if(rs != null) try { rs.close(); } catch(Exception e) {}
 				if(ps != null) try { ps.close(); } catch(Exception e) {}
@@ -121,8 +113,8 @@ public class JDBCUtil {
 				con = DriverManager.getConnection(url, user, password);
 				ps = con.prepareStatement(sql);
 				rs = ps.executeQuery();
-				ResultSetMetaData md = rs.getMetaData(); //╦че╦╣╔юлем : ╣╔юлем©║ ╢Кгя ╣╔юлем
-				int columnCount = md.getColumnCount(); //дц╥Ё ╪Ж
+				ResultSetMetaData md = rs.getMetaData(); //О©╫О©╫е╦О©╫О©╫О©╫О©╫О©╫О©╫ : О©╫О©╫О©╫О©╫О©╫м©О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+				int columnCount = md.getColumnCount(); //О©╫ц╥О©╫ О©╫О©╫
 				while(rs.next()){
 					HashMap<String, Object> row = new HashMap<>();
 					for(int i = 1; i <= columnCount; i++){
@@ -152,8 +144,8 @@ public class JDBCUtil {
 					ps.setObject(i + 1, param.get(i));
 				}
 				rs = ps.executeQuery();
-				ResultSetMetaData md = rs.getMetaData(); //╦че╦╣╔юлем : ╣╔юлем©║ ╢Кгя ╣╔юлем
-				int columnCount = md.getColumnCount(); //дц╥Ё ╪Ж
+				ResultSetMetaData md = rs.getMetaData(); //О©╫О©╫е╦О©╫О©╫О©╫О©╫О©╫О©╫ : О©╫О©╫О©╫О©╫О©╫м©О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫
+				int columnCount = md.getColumnCount(); //О©╫ц╥О©╫ О©╫О©╫
 				while(rs.next()){
 					HashMap<String, Object> row = new HashMap<>();
 					for(int i = 1; i <= columnCount; i++){

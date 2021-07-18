@@ -1,0 +1,31 @@
+package controller;
+
+import dao.CharacterDAO;
+import vo.CharacterVO;
+
+public class GameController {
+	private GameController () {}
+	private static GameController instance;
+	public static GameController getController() {
+		if(instance == null) {
+			instance = new GameController();
+		}
+		return instance;
+	}
+	
+	public CharacterVO getCharacterInfo(CharacterVO vo) throws Exception {
+		CharacterDAO dao = CharacterDAO.getCharacterDAO();
+		return dao.showCharacterInfo(vo);
+	}
+	
+	public boolean mountingWeapon(CharacterVO vo) throws Exception {
+		
+		
+		return false;
+	}
+	
+	public boolean unEquippingWeapon() {
+		
+		return false;
+	}
+}

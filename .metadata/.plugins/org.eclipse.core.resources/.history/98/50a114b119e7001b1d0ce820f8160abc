@@ -1,0 +1,14 @@
+package controller;
+
+public class CharacterController {
+	private CharacterController() {}
+	private static CharacterController instance;
+	public static CharacterController getCharacterController() {
+		if(instance == null) {
+			instance = new CharacterController();
+		}
+		return instance;
+	}
+	
+	
+}

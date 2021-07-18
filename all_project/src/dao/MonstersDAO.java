@@ -1,48 +1,45 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import util.ConnectionDB;
-
+import java.util.Map;
+import util.JDBCUtil;
 import vo.MonstersVO;
 
 public class MonstersDAO {
+	private MonstersDAO() {}
+	private static MonstersDAO instance;
+	public static MonstersDAO getMonsterDAO() {
+		if(instance == null) {
+			instance = new MonstersDAO();
+		}
+		return instance;
+	}
 	
 	public List<MonstersVO> showMonsterList() throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT *");
 		sql.append("  FROM MONSTERS");
 		
-		ConnectionDB instance = ConnectionDB.getInstance();
-		Connection conn = instance.getConnection();
-		PreparedStatement ps = conn.prepareStatement(sql.toString());
-		
-		ResultSet rs = ps.executeQuery();
-		
+		List<Map<String, Object>> map = JDBCUtil.getInstance().selectList(sql.toString());
 		List<MonstersVO> list = new ArrayList<>();
-		while(rs.next()) {
-			String monNm = rs.getString("MON_NM");
-			int momHp = rs.getInt("MON_HP");
-			int momAtt = rs.getInt("MON_ATT");
-			int momDef = rs.getInt("MON_DEF");
-			int momGold = rs.getInt("MON_GOLD");
-			int momLev = rs.getInt("MON_LEV");
-			String itemNm = rs.getString("ITEM_NM");
-			list.add(new MonstersVO(monNm, momHp, momAtt, momDef, momGold, momLev, itemNm));
+		
+		for(int i = 0; i < map.size(); i++) {
+			MonstersVO monster = new MonstersVO((String)map.get(i).get("MON_HP"), (Integer)map.get(i).get("MON_HP"), 
+					(Integer)map.get(i).get("MON_ATT"), (Integer)map.get(i).get("MON_DEF"),
+					(Integer)map.get(i).get("MON_GOLD"), (Integer)map.get(i).get("MON_LEV"), 
+					(String)map.get(i).get("ITEM_NM"));
+			list.add(monster);
 		}
+		
 		return list;
 	}
 	
-	//공격
 	public double attMonster(MonstersVO vo) {
 		double damage = vo.getMomAtt() * 1.2;
 		return damage;
 	}
 	
-	//데미지 받음
 	public MonstersVO defMonster(MonstersVO monVo, double userAtt) {
 		double def = monVo.getMomDef() * monVo.getMomLev() / 10;
 		
@@ -51,19 +48,16 @@ public class MonstersDAO {
 		return monVo;
 	}
 	
-	//경험치 드랍
 	public int sendExe(MonstersVO vo) {
 		return vo.getMomLev() * 10;
 	}
 	
-	//아이템 드랍
 	public String sendItem(MonstersVO vo) {
 		String item = vo.getItemNm();
 		return item;
 	}
 	
 	
-	//골드 드랍
 	public int sendGold(MonstersVO vo) {
 		int gold = vo.getMomGold();
 		return gold;
