@@ -1,0 +1,96 @@
+package dao;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import util.JDBCUtil;
+import vo.MarketVO;
+
+public class MarketDAO {
+	private MarketDAO() {}
+	private static MarketDAO intance;
+	public static MarketDAO getMarketDAO() {
+		if(intance == null) {
+			intance = new MarketDAO();
+		}
+		return intance;
+	}
+	
+	public List<MarketVO> showMarketList() throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT *");
+		sql.append("  FROM MARKET");
+		sql.append(" WHERE MARKET_STATE = 1");
+		
+		List<Map<String, Object>> map = JDBCUtil.getInstance().selectList(sql.toString());
+		List<MarketVO> list = new ArrayList<>();
+		
+		for(int i = 0; i < map.size(); i++) {
+			MarketVO market = new MarketVO((Integer)map.get(i).get("MARKET_IDX"), (String)map.get(i).get("MARKET_TITLE"), 
+					(String)map.get(i).get("MARKET_CONTENTS"), (Integer)map.get(i).get("MARKET_PRICE"), 
+					(String)map.get(i).get("MARKET_STATE"), (Integer)map.get(i).get("CHAR_IDX"),
+					(String)map.get(i).get("ITEM_NM"), (int)map.get(i).get("ITEM_CO"));
+			list.add(market);
+		}
+		
+		return list;
+	}
+	
+	public boolean updateMarketList(MarketVO vo) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" UPDATE MARKET");
+		sql.append("    SET MARKET_STATE = 0");
+		sql.append("  WHERE MARKET_IDX = ?");
+		
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getMarketIdx());
+		
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		if(result > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean insertMarketItem(MarketVO vo) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO MARKET VALUES(");
+		sql.append("	SEQ_MARKET_IDX,");
+		sql.append("	?,");
+		sql.append("	?,");
+		sql.append("	?,");
+		sql.append("	1,");
+		sql.append("	?");
+		sql.append(")");
+		
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getMarketTitle());
+		list.add(vo.getMarketContents());
+		list.add(vo.getMarketPrice());
+		list.add(vo.getCharIdx());
+		
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+	
+		if(result > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean updateMarketItem(MarketVO vo) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE MARKET");
+		sql.append("   SET MARKET_STATE = 0");
+		sql.append(" WHERE MARKET_IDX = ?");
+		
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getMarketIdx());
+		
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		
+		if(result > 0) {
+			return true;
+		}
+		return false;
+	}
+}

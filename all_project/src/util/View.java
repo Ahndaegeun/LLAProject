@@ -130,6 +130,7 @@ public class View {
 		
 		//Choose Character
 		character:while (LoginSessionUtil.getInstance().getUser() != null) {
+			List<CharacterVO> list = new ArrayList<>();
 			System.out.println("========== Character menu ==========");
 			System.out.println("1.Create Character\t2.Select Character\t3.Delete Character");
 			System.out.print("input >> ");
@@ -149,10 +150,14 @@ public class View {
 					break;
 				case 2:
 					System.out.println("========== Select Character ==========");
-					List<CharacterVO> list = characterController.showAllCharacters(new MemberVO(LoginSessionUtil.getInstance().getUser().getId()));
+					list = characterController.showAllCharacters(new MemberVO(LoginSessionUtil.getInstance().getUser().getId()));
+					if(list == null) {
+						System.out.println("no character");
+						break;
+					}
 					System.out.println("Index / Name / Level / Job");
 					for(int i = 0; i < list.size(); i++)  {
-						System.out.printf("%d. %s / %d / %s", i+1, list.get(i).getCharName(), list.get(i).getCharLevel(), list.get(i).getJob());
+						System.out.printf("%d. %s / %d / %s\n", i+1, list.get(i).getCharName(), list.get(i).getCharLevel(), list.get(i).getJob());
 					}
 					System.out.println("==============================");
 					System.out.print("Choose Play Character (0. return)>> ");
@@ -167,10 +172,14 @@ public class View {
 				case 3:
 					System.out.println("========== Delete Character ==========");
 					list = characterController.showAllCharacters(new MemberVO(LoginSessionUtil.getInstance().getUser().getId()));
+					if(list == null) {
+						System.out.println("no character");
+						break;
+					}
 					System.out.println("Index / Name / Level / Job");
 					
 					for(int i = 0; i < list.size(); i++)  {
-						System.out.printf("%d. %s / %d / %s", i+1, list.get(i).getCharName(), list.get(i).getCharLevel(), list.get(i).getJob());
+						System.out.printf("%d. %s / %d / %s\n", i+1, list.get(i).getCharName(), list.get(i).getCharLevel(), list.get(i).getJob());
 					}
 					System.out.println("==============================");
 					System.out.print("Character to be deleted (0. return)>> ");
@@ -211,7 +220,7 @@ public class View {
 					System.out.println("DEF : " + info.getCharDef());
 					System.out.println("LEVEL : " + info.getCharLevel());
 					System.out.println("EXE : " + info.getCharExe() + " / " + info.getCharMaxExe());
-					System.out.println("Weapon : " + info.getCharWeapon());
+					System.out.println("Weapon : " + info.getCharWeapon()); 
 					System.out.println("Armor : " + info.getCharArmor());
 					System.out.println("Gold : " + info.getCharGold());
 					System.out.println("Job : " + info.getJob());
@@ -253,12 +262,15 @@ public class View {
 					break;
 				case 2:
 					System.out.println("=============== Inventory ===============");
-					System.out.println("Index    |    Item Name    |    Count");
 					List<InventoryVO> list = gameController.showInventory(currentChar);
+					if(list.size() == 0) {
+						System.out.println("You don't have any Items");
+						break;
+					}
+					System.out.println("Index    |    Item Name    |    Count");
 					int i = 0;
 					for(InventoryVO entry : list) {
 						System.out.println(++i + "    |    " + entry.getItemName() + "    |    " + entry.getItemCo());
-						System.out.println();
 					}
 					System.out.println("======================================");
 					System.out.println("1.useItem\t2.Go to menu");
@@ -267,7 +279,7 @@ public class View {
 						case 1:
 							System.out.print("Choose Item Number >> ");
 							input = ScanUtil.nextInt();
-							gameController.useItem(new InventoryVO(list.get(input - 1).getItemName(), currentChar.getCharIdx(), list.get(input - 1).getItemCo()));
+							gameController.useItem(new InventoryVO(list.get(input - 1).getItemName(), currentChar.getCharIdx(), list.get(input - 1).getItemCo(), list.get(i-1).getDitin()));
 							
 							break;
 						default:
@@ -277,7 +289,7 @@ public class View {
 				case 3:
 					market:while(true) {
 						System.out.println("=============== Market ===============");
-						System.out.println("1.Show Board List\t2.Write Contents");
+						System.out.println("1.Show Board List\t2.Write Contents\t3.out");
 						input = ScanUtil.nextInt();
 						switch (input) {
 							case 1:
@@ -309,12 +321,15 @@ public class View {
 							System.out.println("========== Write Board ==========");
 							System.out.print("Title >> ");
 							String title = ScanUtil.nextLine();
+							System.out.print("Contents >> ");
+							String contents = ScanUtil.nextLine();
 							System.out.print("Item Name >> ");
 							String itemName = ScanUtil.nextLine();
 							System.out.print("Price >> ");
 							int price = ScanUtil.nextInt();
-							
-							boolean isSuccess = marketController.insertBaord(new MarketVO(0, title, itemName, price, "1", currentChar.getCharIdx()));
+							System.out.print("Item Count");
+							int count = ScanUtil.nextInt();
+							boolean isSuccess = marketController.insertBaord(new MarketVO(0, title, contents, price, "1", currentChar.getCharIdx(), itemName, count));
 							
 							if(isSuccess) {
 								System.out.println("success");
@@ -327,14 +342,22 @@ public class View {
 							break market;
 						}
 					}
+					break;
 				case 4:
 					System.out.println("=============== Huntting ===============");
+					System.out.println();
 					MonstersVO monster = hunttingController.getMonster(currentChar);
 					List<Object> fighters = new ArrayList<>();	
-					fighters.add(currentChar);
-					fighters.add(monster);
+					fighters.add(0, currentChar);
+					System.out.println("========== Monster ==========");
+					System.out.println("Monster Name >> " + monster.getMonNm());
+					System.out.println("Monster HP >> " + monster.getMomHp());
+					System.out.println("=============================");
+					System.out.println();
 					huntting:while(true) {
+						fighters.add(1, monster);
 						CharacterVO user = gameController.getCharacterInfo(currentChar);
+						
 						System.out.println("1.Basic Att\t2.SkillAtt\t3.run");
 						input = ScanUtil.nextInt();
 						switch (input) {
@@ -345,6 +368,7 @@ public class View {
 								List<SkillsVO> skillList = hunttingController.showSkillList(currentChar);
 								if(skillList.size() <= 0) {
 									System.out.println("you don't have any skills...");
+									System.out.println();
 									break;
 								}
 								System.out.println("========== Skill List ==========");
@@ -369,17 +393,30 @@ public class View {
 								break;
 						}
 						if(monster.getMomHp() <= 0) {
+							System.out.println("Monster Die");
+							System.out.println();
+							hunttingController.getExe(currentChar, monster);
+							if(characterController.levelCheck(currentChar)) {
+								System.out.println("1.전사\t2.마법사\t3.도적");
+								String job = ScanUtil.nextLine();
+								characterController.changeClass(currentChar, job);
+							}
+							break huntting;
+						} else if(currentChar.getCharHp() <= 0) {
+							System.out.println("You Die");
+							System.out.println();
+							hunttingController.userDie(currentChar);
 							break huntting;
 						} else {
 							System.out.println("========== Monster ==========");
-							System.out.println("Monster Name >> " + monster.getItemNm());
+							System.out.println("Monster Name >> " + monster.getMonNm());
 							System.out.println("Monster HP >> " + monster.getMomHp());
 							System.out.println("========== User ==========");
-							System.out.println("My Hp" + user.getCharHp() + " / " + user.getCharMaxHp());
-							System.out.println("My Mp" + user.getCharMp() + " / " + user.getCharMaxMp());
+							System.out.println("My Hp >> " + user.getCharHp() + " / " + user.getCharMaxHp());
+							System.out.println("My Mp >> " + user.getCharMp() + " / " + user.getCharMaxMp());
 							System.out.println("========================");
+							System.out.println();
 						}
-						break;
 					}
 					break;
 				case 5:
@@ -441,15 +478,29 @@ public class View {
 												break;
 										}
 										if(monster.getMomHp() <= 0) {
+											System.out.println("Monster Die");
+											System.out.println();
+											hunttingController.getExe(currentChar, monster);
+											if(characterController.levelCheck(currentChar)) {
+												System.out.println("1.전사\t2.마법사\t3.도적");
+												String job = ScanUtil.nextLine();
+												characterController.changeClass(currentChar, job);
+											}
+											break dunjeon;
+										} else if(currentChar.getCharHp() <= 0) {
+											System.out.println("You Die");
+											System.out.println();
+											hunttingController.userDie(currentChar);
 											break dunjeon;
 										} else {
 											System.out.println("========== Monster ==========");
-											System.out.println("Monster Name >> " + monster.getItemNm());
+											System.out.println("Monster Name >> " + monster.getMonNm());
 											System.out.println("Monster HP >> " + monster.getMomHp());
 											System.out.println("========== User ==========");
-											System.out.println("My Hp" + user.getCharHp() + " / " + user.getCharMaxHp());
-											System.out.println("My Mp" + user.getCharMp() + " / " + user.getCharMaxMp());
+											System.out.println("My Hp >> " + user.getCharHp() + " / " + user.getCharMaxHp());
+											System.out.println("My Mp >> " + user.getCharMp() + " / " + user.getCharMaxMp());
 											System.out.println("========================");
+											System.out.println();
 										}
 										break;
 									}

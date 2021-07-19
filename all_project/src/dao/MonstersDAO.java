@@ -25,9 +25,12 @@ public class MonstersDAO {
 		List<MonstersVO> list = new ArrayList<>();
 		
 		for(int i = 0; i < map.size(); i++) {
-			MonstersVO monster = new MonstersVO((String)map.get(i).get("MON_HP"), (Integer)map.get(i).get("MON_HP"), 
-					(Integer)map.get(i).get("MON_ATT"), (Integer)map.get(i).get("MON_DEF"),
-					(Integer)map.get(i).get("MON_GOLD"), (Integer)map.get(i).get("MON_LEV"), 
+			MonstersVO monster = new MonstersVO((map.get(i).get("MON_NM") + ""), 
+					Integer.parseInt(map.get(i).get("MON_HP") + ""), 
+					Integer.parseInt(map.get(i).get("MON_ATT") + ""), 
+					Integer.parseInt(map.get(i).get("MON_DEF") + ""),
+					Integer.parseInt(map.get(i).get("MON_GOLD") + ""), 
+					Integer.parseInt(map.get(i).get("MON_LEV") + ""), 
 					(String)map.get(i).get("ITEM_NM"));
 			list.add(monster);
 		}
@@ -44,7 +47,12 @@ public class MonstersDAO {
 		double def = monVo.getMomDef() * monVo.getMomLev() / 10;
 		
 		double damage = monVo.getMomHp() - userAtt;
-		monVo.setMomHp((int)(monVo.getMomHp() - (damage - def)));
+		
+		if(damage - def >= monVo.getMomHp()) {
+			monVo.setMomHp(0);
+			return monVo;
+		}
+		monVo.setMomHp((int)damage);
 		return monVo;
 	}
 	

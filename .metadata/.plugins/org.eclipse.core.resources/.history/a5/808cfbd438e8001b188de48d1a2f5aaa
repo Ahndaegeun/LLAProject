@@ -1,0 +1,497 @@
+package util;
+
+import java.util.ArrayList;
+import java.util.List;
+import controller.CharacterController;
+import controller.DunjeonConteroller;
+import controller.GameController;
+import controller.HunttingController;
+import controller.MarketController;
+import controller.UserController;
+import vo.CharacterVO;
+import vo.DunjeonVO;
+import vo.InventoryVO;
+import vo.MarketVO;
+import vo.MemberVO;
+import vo.MonstersVO;
+import vo.SkillsVO;
+
+public class View {
+	public static void main(String[] args) throws Exception {
+		int input = 0;
+		UserController userController = UserController.getLoginController();
+		CharacterController characterController = CharacterController.getCharacterController();
+		GameController gameController = GameController.getController();
+		MarketController marketController = MarketController.getController();
+		HunttingController hunttingController = HunttingController.getHunttingController();
+		DunjeonConteroller dunjeonConteroller = DunjeonConteroller.geDunjeonConteroller();
+		
+		// Main Login
+		main:while (true) {
+			System.out.println("======== DDIT RPG ========");
+			System.out.println("1. LogIn\t2. SignUp\t3. Search ID or Password\t4. Program Off");
+			System.out.print("input >> ");
+			input = ScanUtil.nextInt();
+			
+			switch(input) {
+				case 1:
+					System.out.println("========== Login ==========");
+					
+					System.out.print("ID >> ");
+					String id = ScanUtil.nextLine();
+					System.out.print("PW >> ");
+					String pw = ScanUtil.nextLine();
+					
+					MemberVO user = new MemberVO(id, pw);
+					
+					userController.login(user);
+					
+					if(LoginSessionUtil.getInstance().getUser() != null) {
+						System.out.println("Login Success");
+						break main;
+					} else {
+						System.out.println("Login fail");
+					}
+					break;
+					
+				case 2:
+					
+					System.out.println("========== SignUp ==========");
+					System.out.print("Name >> ");
+					String name = ScanUtil.nextLine();
+					System.out.print("Regist Numver >> ");
+					String regNo = ScanUtil.nextLine();
+					System.out.print("ID >> ");
+					id = ScanUtil.nextLine();
+					System.out.print("PW >> ");
+					pw = ScanUtil.nextLine();
+					System.out.print("PW Check >> ");
+					String pwCk = ScanUtil.nextLine();
+					
+					user = new MemberVO(id, pw, name, regNo);
+					
+					if(userController.SignUp(user, pwCk)) {
+						System.out.println("success");
+					} else {
+						System.out.println("fail");
+					}
+					break;
+					
+				case 3:
+					System.out.println("========== Search ID or Password ==========");
+					System.out.println("1.Search ID\t2.Reset Password");
+					System.out.print("input >> ");
+					input = ScanUtil.nextInt();
+					
+					switch (input) {
+						case 1:
+							System.out.println("========== Search ID ==========");
+							System.out.print("Name >> ");
+							name = ScanUtil.nextLine();
+							System.out.print("Registe Number >> ");
+							regNo = ScanUtil.nextLine();
+							
+							user = new MemberVO(null, null, name, regNo);
+							String findId = userController.searchId(user);
+							if(findId != null) {
+								System.out.println("Id >> " + findId);
+								break;
+							}
+							System.out.println("empty ID");
+							break;
+	
+						case 2:
+							System.out.println("========== Reset Password ==========");
+							System.out.print("Name >> ");
+							name = ScanUtil.nextLine();
+							System.out.print("Registe Number >> ");
+							regNo = ScanUtil.nextLine();
+							System.out.print("ID >> ");
+							id = ScanUtil.nextLine();
+							
+							user = new MemberVO(id, null, name, regNo);
+							if(userController.resetPw(user)) {
+								System.out.println("Reset success");
+								break;
+							}
+							System.out.println("Reset fail");
+							break;
+					}
+					break;
+					
+				case 4:
+					System.out.println("Program Off");
+					break main;
+					
+				default:
+					System.out.println("return");
+			}
+		}
+		
+		//Choose Character
+		character:while (LoginSessionUtil.getInstance().getUser() != null) {
+			List<CharacterVO> list = new ArrayList<>();
+			System.out.println("========== Character menu ==========");
+			System.out.println("1.Create Character\t2.Select Character\t3.Delete Character");
+			System.out.print("input >> ");
+			input = ScanUtil.nextInt();
+			switch (input) {
+				case 1:
+					System.out.println("========== Create Character ==========");
+					System.out.print("Character Name >> ");
+					String charName = ScanUtil.nextLine();
+					
+					boolean create = characterController.createCharacter(new CharacterVO(charName, LoginSessionUtil.getInstance().getUser().getId()));
+					if(create) {
+						System.out.println("Success Create Character");
+					} else {
+						System.out.println("fail");
+					}
+					break;
+				case 2:
+					System.out.println("========== Select Character ==========");
+					list = characterController.showAllCharacters(new MemberVO(LoginSessionUtil.getInstance().getUser().getId()));
+					if(list == null) {
+						System.out.println("no character");
+						break;
+					}
+					System.out.println("Index / Name / Level / Job");
+					for(int i = 0; i < list.size(); i++)  {
+						System.out.printf("%d. %s / %d / %s", i+1, list.get(i).getCharName(), list.get(i).getCharLevel(), list.get(i).getJob());
+					}
+					System.out.println("==============================");
+					System.out.print("Choose Play Character (0. return)>> ");
+					input = ScanUtil.nextInt();
+					if(input == 0) {
+						System.out.println("return!");
+						break;
+					}
+					
+					CharacterSessionUtil.getCharacterSessionUtil().setCharacter(list.get(input - 1));
+					break character;
+				case 3:
+					System.out.println("========== Delete Character ==========");
+					list = characterController.showAllCharacters(new MemberVO(LoginSessionUtil.getInstance().getUser().getId()));
+					if(list == null) {
+						System.out.println("no character");
+						break;
+					}
+					System.out.println("Index / Name / Level / Job");
+					
+					for(int i = 0; i < list.size(); i++)  {
+						System.out.printf("%d. %s / %d / %s", i+1, list.get(i).getCharName(), list.get(i).getCharLevel(), list.get(i).getJob());
+					}
+					System.out.println("==============================");
+					System.out.print("Character to be deleted (0. return)>> ");
+					input = ScanUtil.nextInt();
+					
+					if(input == 0) {
+						System.out.println("return!");
+						break;
+					}
+					boolean result = characterController.deleteCharacter(list.get(input - 1));
+					if(result == true) {
+						System.out.println("Character Deleted!");
+						break;
+					}
+					System.out.println("Error");
+					break;
+				default:
+					System.out.println("return");
+					break;
+			}
+		}
+		
+		//Play game
+		playGame:while(CharacterSessionUtil.getCharacterSessionUtil().getCharacter() != null) {
+			CharacterVO currentChar = CharacterSessionUtil.getCharacterSessionUtil().getCharacter();
+			System.out.println("============== Game Start ==============");
+			System.out.println("1.MyInfo\t2.Show Inventory\t3.Market\t4.Hunting\t5.Dunjeon\t6.Quit");
+			System.out.print("Choose >> ");
+			input = ScanUtil.nextInt();
+			switch (input) {
+				case 1:
+					System.out.println("============ Infomation ============");
+					CharacterVO info = gameController.getCharacterInfo(currentChar);
+					System.out.println("Name : " + info.getCharName());
+					System.out.println("HP : " + info.getCharHp() + " / " + info.getCharMaxHp());
+					System.out.println("MP : " + info.getCharMp() + " / " + info.getCharMaxMp());
+					System.out.println("ATT : " + info.getCharAtt());
+					System.out.println("DEF : " + info.getCharDef());
+					System.out.println("LEVEL : " + info.getCharLevel());
+					System.out.println("EXE : " + info.getCharExe() + " / " + info.getCharMaxExe());
+					System.out.println("Weapon : " + info.getCharWeapon());
+					System.out.println("Armor : " + info.getCharArmor());
+					System.out.println("Gold : " + info.getCharGold());
+					System.out.println("Job : " + info.getJob());
+					System.out.println("Dunjeon : " + info.getFloor());
+					System.out.println("=================================");
+					
+				equip:while(true) {
+					System.out.println("1.Weapon unEquip\t2.Armor unEquip\t3.Out");
+					System.out.print("choose menu >> ");
+					input = ScanUtil.nextInt();
+					switch (input) {
+						case 1:
+							System.out.println("========== Weapon unEquip ==========");
+							boolean result = gameController.unEquippingWeapon(currentChar);
+							if(result) {
+								System.out.println("Success");
+								break equip;
+							}
+							System.out.println("Fail");
+							break equip;
+						case 2:
+							System.out.println("========== Armor unEquip ==========");
+							result = gameController.unEquippingArmor(currentChar);
+							if(result) {
+								System.out.println("Success");
+								break equip;
+							}
+							System.out.println("Fail");
+							break equip;
+						case 3:
+							System.out.println("Go to Main");
+							break equip;
+							
+						default:
+							System.out.println("Retry");
+							break;
+					}
+				}
+					break;
+				case 2:
+					System.out.println("=============== Inventory ===============");
+					System.out.println("Index    |    Item Name    |    Count");
+					List<InventoryVO> list = gameController.showInventory(currentChar);
+					int i = 0;
+					for(InventoryVO entry : list) {
+						System.out.println(++i + "    |    " + entry.getItemName() + "    |    " + entry.getItemCo());
+						System.out.println();
+					}
+					System.out.println("======================================");
+					System.out.println("1.useItem\t2.Go to menu");
+					input = ScanUtil.nextInt();
+					switch (input) {
+						case 1:
+							System.out.print("Choose Item Number >> ");
+							input = ScanUtil.nextInt();
+							gameController.useItem(new InventoryVO(list.get(input - 1).getItemName(), currentChar.getCharIdx(), list.get(input - 1).getItemCo()));
+							
+							break;
+						default:
+							System.out.println("Go to menu!");
+					}
+					break;
+				case 3:
+					market:while(true) {
+						System.out.println("=============== Market ===============");
+						System.out.println("1.Show Board List\t2.Write Contents");
+						input = ScanUtil.nextInt();
+						switch (input) {
+							case 1:
+								System.out.println("========== List ==========");
+								List<MarketVO> marketList = marketController.showBoardList();
+								System.out.println("Index    |    Title    |    Contents    |    Price");
+								int marketIndex = 1;
+								for(MarketVO entry : marketList) {
+									System.out.println(marketIndex++ + "    |    " + entry.getMarketTitle() + "    |    " + entry.getMarketContents() + "    |    " + entry.getMarketPrice());
+								}
+								System.out.println("========================");
+								System.out.println("1.Choose\t2.Back");
+								input = ScanUtil.nextInt();
+								switch (input) {
+								case 1:
+									boolean result = marketController.choiceBoard(marketList.get(input - 1), currentChar);
+									if(result) {
+										System.out.println("Success");
+										break;
+									}
+									System.out.println("Fail");
+									break;
+								default:
+									System.out.println("Back to Market Menu");
+									break;
+							}
+							break;
+						case 2:
+							System.out.println("========== Write Board ==========");
+							System.out.print("Title >> ");
+							String title = ScanUtil.nextLine();
+							System.out.print("Contents >> ");
+							String contents = ScanUtil.nextLine();
+							System.out.print("Item Name >> ");
+							String itemName = ScanUtil.nextLine();
+							System.out.print("Price >> ");
+							int price = ScanUtil.nextInt();
+							System.out.println("Item Count");
+							int count = ScanUtil.nextInt();
+							boolean isSuccess = marketController.insertBaord(new MarketVO(0, title, contents, price, "1", currentChar.getCharIdx(), itemName, count));
+							
+							if(isSuccess) {
+								System.out.println("success");
+								break;
+							}
+							break;
+							
+						default:
+							System.out.println("Back Main menu");
+							break market;
+						}
+					}
+				case 4:
+					System.out.println("=============== Huntting ===============");
+					MonstersVO monster = hunttingController.getMonster(currentChar);
+					List<Object> fighters = new ArrayList<>();	
+					fighters.add(currentChar);
+					fighters.add(monster);
+					huntting:while(true) {
+						CharacterVO user = gameController.getCharacterInfo(currentChar);
+						System.out.println("1.Basic Att\t2.SkillAtt\t3.run");
+						input = ScanUtil.nextInt();
+						switch (input) {
+							case 1:
+								monster = hunttingController.characterBasicAtt(fighters);
+								break;
+							case 2:
+								List<SkillsVO> skillList = hunttingController.showSkillList(currentChar);
+								if(skillList.size() <= 0) {
+									System.out.println("you don't have any skills...");
+									break;
+								}
+								System.out.println("========== Skill List ==========");
+								for(SkillsVO entry : skillList) {
+									System.out.println("Skill Name >> " + entry.getSkillNm());
+								}
+								System.out.println("===========================");
+								System.out.print("Skill Name >> ");
+								String skillName = ScanUtil.nextLine();
+								monster = hunttingController.characterSkillAtt(fighters, new SkillsVO(skillName, 0, 0, 0, currentChar.getJob()));
+								
+								break;
+							case 3:
+								if(hunttingController.run()) {
+									break huntting;
+								}
+								System.out.println("fail");
+								break;
+	
+							default:
+								System.out.println("error");
+								break;
+						}
+						if(monster.getMomHp() <= 0) {
+							break huntting;
+						} else {
+							System.out.println("========== Monster ==========");
+							System.out.println("Monster Name >> " + monster.getItemNm());
+							System.out.println("Monster HP >> " + monster.getMomHp());
+							System.out.println("========== User ==========");
+							System.out.println("My Hp" + user.getCharHp() + " / " + user.getCharMaxHp());
+							System.out.println("My Mp" + user.getCharMp() + " / " + user.getCharMaxMp());
+							System.out.println("========================");
+						}
+						break;
+					}
+					break;
+				case 5:
+					System.out.println("=============== Dunjeon ===============");
+					System.out.println("1.Select Floor\t2.Back to Menu");
+					System.out.print("Input >> ");
+					input = ScanUtil.nextInt();
+					
+					switch (input) {
+						case 1:
+							DunjeonVO dunjeon = dunjeonConteroller.showUserDunjeon(currentChar);
+							System.out.println("User Top Floor >> " + dunjeon.getFloor());
+							System.out.print("Select Floor >> ");
+							int floor = ScanUtil.nextInt();
+							if(floor > dunjeon.getFloor()) {
+								System.out.println("It's a floor you can't go to yet");
+								break;
+							}
+							System.out.println("========== Floor Infomation ==========");
+							System.out.println("Floor >> " + dunjeon.getFloor());
+							System.out.println("Admfee >> " + dunjeon.getAdmfee());
+							System.out.println("Monster Name >> " + dunjeon.getMonNm());
+							System.out.println("=================================");
+							System.out.print("Enter the dunjeon ? (1. Yes / 2. No ");
+							int enter = ScanUtil.nextInt();
+							switch (enter) {
+								case 1:
+									monster = dunjeonConteroller.getDunjeonMonster(dunjeon);
+									fighters = new ArrayList<>();	
+									fighters.add(currentChar);
+									fighters.add(monster);
+									dunjeon:while(true) {
+										CharacterVO user = gameController.getCharacterInfo(currentChar);
+										System.out.println("1.Basic Att\t2.SkillAtt");
+										input = ScanUtil.nextInt();
+										switch (input) {
+											case 1:
+												monster = hunttingController.characterBasicAtt(fighters);
+												break;
+											case 2:
+												List<SkillsVO> skillList = hunttingController.showSkillList(currentChar);
+												if(skillList.size() <= 0) {
+													System.out.println("you don't have any skills...");
+													break;
+												}
+												System.out.println("========== Skill List ==========");
+												for(SkillsVO entry : skillList) {
+													System.out.println("Skill Name >> " + entry.getSkillNm());
+												}
+												System.out.println("===========================");
+												System.out.print("Skill Name >> ");
+												String skillName = ScanUtil.nextLine();
+												monster = hunttingController.characterSkillAtt(fighters, new SkillsVO(skillName, 0, 0, 0, currentChar.getJob()));
+												
+												break;
+												
+											default:
+												System.out.println("error");
+												break;
+										}
+										if(monster.getMomHp() <= 0) {
+											break dunjeon;
+										} else {
+											System.out.println("========== Monster ==========");
+											System.out.println("Monster Name >> " + monster.getItemNm());
+											System.out.println("Monster HP >> " + monster.getMomHp());
+											System.out.println("========== User ==========");
+											System.out.println("My Hp" + user.getCharHp() + " / " + user.getCharMaxHp());
+											System.out.println("My Mp" + user.getCharMp() + " / " + user.getCharMaxMp());
+											System.out.println("========================");
+										}
+										break;
+									}
+									break;
+	
+								default:
+									System.out.println("back to menu");
+									break;
+							}
+							break;
+						case 2:
+							System.out.println("back...");
+							break;
+	
+						default:
+							System.out.println("Error");
+							break;
+					}
+					
+					break;
+				case 6:
+					System.out.println("Game Off...");
+					System.out.println("Bye...!");
+					break playGame;
+				default:
+					System.out.println("Retry");
+					break;
+			}
+		}
+		
+		
+	}
+}

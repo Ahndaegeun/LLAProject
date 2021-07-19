@@ -23,8 +23,8 @@ public class JDBCUtil {
 		}
 		
 		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String user = "all_project";
-		String password = "java";
+		String user = "bp";
+		String password = "1234";
 		
 		Connection con = null;
 		PreparedStatement ps = null;

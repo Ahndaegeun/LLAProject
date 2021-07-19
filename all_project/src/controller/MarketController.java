@@ -27,7 +27,6 @@ public class MarketController {
 	}
 	
 	public boolean choiceBoard(MarketVO marketVo, CharacterVO charVo) throws Exception {
-		MarketDAO marketDao = MarketDAO.getMarketDAO();
 		CharacterDAO charDao = CharacterDAO.getCharacterDAO();
 		InventoryDAO invenDao = InventoryDAO.getInvetoryDAO();
 		
@@ -36,7 +35,7 @@ public class MarketController {
 		
 		
 		//캐릭터인벤토리 조회
-		List<InventoryVO> charInven = invenDao.showInventory(new InventoryVO(null, charVo.getCharIdx(), 0));
+		List<InventoryVO> charInven = invenDao.showInventory(new InventoryVO(null, charVo.getCharIdx(), 0, null));
 		
 		boolean hasItemCheck = false;
 		
@@ -49,13 +48,13 @@ public class MarketController {
 		//인벤토리 아이템 삭제 및 전송
 		if(hasItemCheck) {
 			charDao.addGold(charVo, marketVo.getMarketPrice());
-			invenDao.insertItem(new InventoryVO(marketVo.getMarketContents(), marketVo.getCharIdx(), 1));
+			invenDao.insertItem(new InventoryVO(marketVo.getMarketContents(), marketVo.getCharIdx(), 1, null));
 		} else {
 			return false;
 		}
 		
 		int getItemCount = 0;
-		List<InventoryVO> list = invenDao.showInventory(new InventoryVO(null, charVo.getCharIdx(), 0));
+		List<InventoryVO> list = invenDao.showInventory(new InventoryVO(null, charVo.getCharIdx(), 0, null));
 		for(InventoryVO entry : list) {
 			if(entry.getItemName().equals(marketVo.getMarketContents())) {
 				getItemCount = entry.getItemCo();
@@ -63,9 +62,9 @@ public class MarketController {
 		}
 		
 		if(getItemCount == 1) {
-			invenDao.useItemDelete(new InventoryVO(null, charVo.getCharIdx(), 0));
+			invenDao.useItemDelete(new InventoryVO(null, charVo.getCharIdx(), 0, null));
 		} else {
-			invenDao.useItemMinus(new InventoryVO(null, charVo.getCharIdx(), 0));
+			invenDao.useItemMinus(new InventoryVO(null, charVo.getCharIdx(), 0, null));
 		}
 		
 		return true;

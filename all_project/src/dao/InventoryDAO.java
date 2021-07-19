@@ -31,6 +31,8 @@ public class InventoryDAO {
 		list.add(vo.getItemCo());
 
 		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		
+		
 
 		if(result > 0) {
 			return true;
@@ -50,8 +52,11 @@ public class InventoryDAO {
 		List<InventoryVO> result = new ArrayList<>();
 		
 		for(int i = 0; i < map.size(); i++) {
-			InventoryVO inven = new InventoryVO((String)map.get(i).get("ITEM_NM"), (Integer)map.get(i).get("CHAR_IDX"),
-					(Integer)map.get(i).get("ITEM_CO"));
+			InventoryVO inven = new InventoryVO(
+					(String)map.get(i).get("ITEM_NM"), 
+					Integer.parseInt(map.get(i).get("CHAR_IDX") + ""),
+					Integer.parseInt(map.get(i).get("ITEM_CO") + ""),
+					(String)map.get(i).get("DITIN"));
 			result.add(inven);
 		}
 		

@@ -24,32 +24,29 @@ public class GameController {
 	
 	public List<InventoryVO> showInventory(CharacterVO vo) throws Exception {
 		InventoryDAO invenDao = InventoryDAO.getInvetoryDAO();
-		List<InventoryVO> list = invenDao.showInventory(new InventoryVO(null, vo.getCharIdx(), 0));
+		List<InventoryVO> list = invenDao.showInventory(new InventoryVO(null, vo.getCharIdx(), 0, null));
 		return list;
 	}
 	
 	public boolean useItem(InventoryVO vo) throws Exception {
 		InventoryDAO invenDao = InventoryDAO.getInvetoryDAO();
-		CharacterDAO charDao = CharacterDAO.getCharacterDAO();
 		boolean result = false;
 		
-		//!!!!!!!!!!!!!!!!! Modify DB !!!!!!!!!!!!!!!!!!!!
-		if(vo.getCharIdx() == 1) {
-			//weapon class1
+		if(vo.getDitin() == "3") {
 			invenDao.mountingWeapon(vo);
 			invenDao.useItemDelete(vo);
-		} else if(vo.getCharIdx() == 2) {
-			//armor class2
+		} else if(vo.getDitin() == "4") {
 			invenDao.mountingArmor(vo);
 			invenDao.useItemDelete(vo);
-		} else {
-			//item class 3
+		} else if(vo.getDitin() == "1"){
 			result = invenDao.useItemChangeUser(vo);
 			if(vo.getItemCo() == 1) {
 				result = invenDao.useItemDelete(vo);
 			} else {
 				result = invenDao.useItemMinus(vo);
 			}
+		} else {
+			result = false;
 		}
 		
 		return result;
@@ -58,7 +55,11 @@ public class GameController {
 	public boolean unEquippingWeapon(CharacterVO vo) throws Exception {
 		InventoryDAO inveDao = InventoryDAO.getInvetoryDAO();
 		CharacterDAO charDao = CharacterDAO.getCharacterDAO();
-		boolean insertItem = inveDao.insertItem(new InventoryVO(vo.getCharWeapon(), vo.getCharIdx(), 1));
+
+		if(vo.getCharWeapon().equals("없음")) {
+			return false;
+		}
+		boolean insertItem = inveDao.insertItem(new InventoryVO(vo.getCharWeapon(), vo.getCharIdx(), 1, null));
 		boolean unEquip = charDao.unEquippingWeapon(vo);
 
 		if(insertItem && unEquip) {
@@ -70,7 +71,10 @@ public class GameController {
 	public boolean unEquippingArmor(CharacterVO vo) throws Exception {
 		InventoryDAO inveDao = InventoryDAO.getInvetoryDAO();
 		CharacterDAO charDao = CharacterDAO.getCharacterDAO();
-		boolean insertItem = inveDao.insertItem(new InventoryVO(vo.getCharArmor(), vo.getCharIdx(), 1));
+		if(vo.getCharArmor().equals("없음")) {
+			return false;
+		}
+		boolean insertItem = inveDao.insertItem(new InventoryVO(vo.getCharArmor(), vo.getCharIdx(), 1, null));
 		boolean unEquip = charDao.unEquippingArmor(vo);
 		
 		if(insertItem && unEquip) {

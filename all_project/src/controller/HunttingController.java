@@ -51,8 +51,10 @@ public class HunttingController {
 		double userAtt = charDao.basicAtt(user);
 		monster = monDao.defMonster(monster, userAtt);
 		
+		
 		double monAtt = monDao.attMonster(monster);
 		charDao.beingAtt(user, monAtt);
+		
 		
 		return monster;
 	}
@@ -71,6 +73,14 @@ public class HunttingController {
 	public List<SkillsVO> showSkillList(CharacterVO vo) {
 		List<SkillsVO> skillList = SkillsDAO.getSkillsDAO().showSkillList(vo);
 		return skillList;
+	}
+	
+	public void userDie(CharacterVO vo) {
+		charDao.die(vo);
+	}
+	
+	public boolean getExe(CharacterVO charVo, MonstersVO monVo) throws Exception {
+		return charDao.getExe(charVo, (monVo.getMomLev() * 10));
 	}
 }
 

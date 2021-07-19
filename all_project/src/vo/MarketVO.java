@@ -7,15 +7,20 @@ public class MarketVO {
 	private int marketPrice;
 	private String marketState;
 	private int charIdx;
-
+	private String itemNm;
+	private int itemCo;
+	
 	public MarketVO(int marketIdx, String marketTitle, String marketContents, int marketPrice, String marketState,
-			int charIdx) {
+			int charIdx, String itemNm, int itemCo) {
+		super();
 		this.marketIdx = marketIdx;
 		this.marketTitle = marketTitle;
 		this.marketContents = marketContents;
 		this.marketPrice = marketPrice;
 		this.marketState = marketState;
 		this.charIdx = charIdx;
+		this.itemNm = itemNm;
+		this.itemCo = itemCo;
 	}
 
 	public int getMarketIdx() {
@@ -66,12 +71,29 @@ public class MarketVO {
 		this.charIdx = charIdx;
 	}
 
+	public String getItemNm() {
+		return itemNm;
+	}
+
+	public void setItemNm(String itemNm) {
+		this.itemNm = itemNm;
+	}
+
+	public int getItemCo() {
+		return itemCo;
+	}
+
+	public void setItemCo(int itemCo) {
+		this.itemCo = itemCo;
+	}
+
 	@Override
 	public String toString() {
 		return "MarketVO [marketIdx=" + marketIdx + ", marketTitle=" + marketTitle + ", marketContents="
 				+ marketContents + ", marketPrice=" + marketPrice + ", marketState=" + marketState + ", charIdx="
-				+ charIdx + "]";
+				+ charIdx + ", itemNm=" + itemNm + ", itemCo=" + itemCo + "]";
 	}
+
 	
 	
 }

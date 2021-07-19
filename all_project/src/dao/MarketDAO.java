@@ -20,15 +20,16 @@ public class MarketDAO {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT *");
 		sql.append("  FROM MARKET");
-		sql.append(" WHERE MARKET_STAET = 1");
+		sql.append(" WHERE MARKET_STATE = 1");
 		
 		List<Map<String, Object>> map = JDBCUtil.getInstance().selectList(sql.toString());
 		List<MarketVO> list = new ArrayList<>();
 		
 		for(int i = 0; i < map.size(); i++) {
-			MarketVO market = new MarketVO((Integer)map.get(i).get("MARKET_IDX"), (String)map.get(i).get("MARKET_TITLE"), 
-					(String)map.get(i).get("MARKET_CONTENTS"), (Integer)map.get(i).get("MARKET_PRICE"), 
-					(String)map.get(i).get("MARKET_STATE"), (Integer)map.get(i).get("CHAR_IDX"));
+			MarketVO market = new MarketVO(Integer.parseInt(map.get(i).get("MARKET_IDX") + ""), (String)map.get(i).get("MARKET_TITLE"), 
+					(String)map.get(i).get("MARKET_CONTENTS"), Integer.parseInt(map.get(i).get("MARKET_PRICE") + ""), 
+					(String)map.get(i).get("MARKET_STATE"), Integer.parseInt(map.get(i).get("CHAR_IDX") + ""),
+					(String)map.get(i).get("ITEM_NM"), Integer.parseInt(map.get(i).get("ITEM_CO") + ""));
 			list.add(market);
 		}
 		
@@ -54,12 +55,14 @@ public class MarketDAO {
 	public boolean insertMarketItem(MarketVO vo) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO MARKET VALUES(");
-		sql.append("	SEQ_MARKET_IDX,");
-		sql.append("	?,");
-		sql.append("	?,");
-		sql.append("	?,");
-		sql.append("	1,");
-		sql.append("	?");
+		sql.append("	SEQ_MARKET_IDX.NEXTVAL,");
+		sql.append("	?,");// TITLE
+		sql.append("	?,");// CONTENTS
+		sql.append("	?,");// PRICE
+		sql.append("	'1',");// STATE
+		sql.append("	?,");// CHARIDX
+		sql.append("	?,");// ITEM NAME
+		sql.append("	?");// ITEM COUNT
 		sql.append(")");
 		
 		List<Object> list = new ArrayList<>();
@@ -67,6 +70,8 @@ public class MarketDAO {
 		list.add(vo.getMarketContents());
 		list.add(vo.getMarketPrice());
 		list.add(vo.getCharIdx());
+		list.add(vo.getItemNm());
+		list.add(vo.getItemCo());
 		
 		int result = JDBCUtil.getInstance().update(sql.toString(), list);
 	

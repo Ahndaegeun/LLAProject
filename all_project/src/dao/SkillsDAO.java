@@ -20,14 +20,14 @@ public class SkillsDAO {
 	
 	public List<SkillsVO> showSkillList(CharacterVO vo) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT SKILL_NM,");
-		sql.append("   	   SKILL_ATT,");
-		sql.append("   	   SKILL_MP,");
-		sql.append("   	   SKILL_LEV,");
-		sql.append("   	   JOB_NM ");
+		sql.append("SELECT S.SKILL_NM,");
+		sql.append("   	   S.SKILL_ATT,");
+		sql.append("   	   S.SKILL_MP,");
+		sql.append("   	   S.SKILL_LEV,");
+		sql.append("   	   J.JOB ");
 		sql.append("  FROM SKILLS S, JOB J, CHARACTERS C");
-		sql.append(" WHERE S.JOB_NM = J.JOB_NM");
-		sql.append("   AND J.JOB_NM = C.JOB_NM");
+		sql.append(" WHERE S.JOB = J.JOB");
+		sql.append("   AND J.JOB = C.JOB");
 		sql.append("   AND SKILL_LEV <= C.CHAR_LEV");
 		sql.append("   AND C.CHAR_IDX = ?");
 		

@@ -36,9 +36,8 @@ public class UserController {
 	
 	public String searchId(MemberVO vo) {
 		MemberDAO dao = MemberDAO.getMemberDAO();
-		String id = dao.returId(vo).getId();
-		if(id != null) {
-			return id;
+		if(dao.returId(vo) != null) {
+			return dao.returId(vo).getId();
 		}
 		return null;
 	}

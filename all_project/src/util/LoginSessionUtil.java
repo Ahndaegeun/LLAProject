@@ -19,7 +19,7 @@ public class LoginSessionUtil {
 		LoginSessionUtil.instance = instance;
 	}
 	public void setUser(MemberVO user) {
-		this.user = user;
+		LoginSessionUtil.user = user;
 	}
 	public MemberVO getUser() {
 		return user;

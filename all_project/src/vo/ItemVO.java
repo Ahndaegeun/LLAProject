@@ -6,13 +6,15 @@ public class ItemVO {
 	private int itemMp;
 	private int itemAtt;
 	private int itemDef;
+	private String ditin;
 
-	public ItemVO(String itemName, int itemHp, int itemMp, int itemAtt, int itemDef) {
+	public ItemVO(String itemName, int itemHp, int itemMp, int itemAtt, int itemDef, String ditin) {
 		this.itemName = itemName;
 		this.itemHp = itemHp;
 		this.itemMp = itemMp;
 		this.itemAtt = itemAtt;
 		this.itemDef = itemDef;
+		this.ditin = ditin;
 	}
 
 	public String getItemName() {
@@ -55,11 +57,20 @@ public class ItemVO {
 		this.itemDef = itemDef;
 	}
 
+	public String getDitin() {
+		return ditin;
+	}
+
+	public void setDitin(String ditin) {
+		this.ditin = ditin;
+	}
+
 	@Override
 	public String toString() {
 		return "ItemVO [itemName=" + itemName + ", itemHp=" + itemHp + ", itemMp=" + itemMp + ", itemAtt=" + itemAtt
-				+ ", itemDef=" + itemDef + "]";
+				+ ", itemDef=" + itemDef + ", ditin=" + ditin + "]";
 	}
+
 	
 	
 }

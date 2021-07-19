@@ -31,8 +31,8 @@ public class DunjeonDAO {
 		list.add(vo.getFloor());
 		
 		Map<String, Object> map = JDBCUtil.getInstance().selectOne(sql.toString(), list);
-		int floor = (Integer)map.get("FLOOR");
-		int admfee = (Integer)map.get("ADMFEE");
+		int floor = Integer.parseInt(map.get("FLOOR") + "");
+		int admfee = Integer.parseInt(map.get("ADMFEE") + "");
 		String monNm = (String)map.get("MON_NM");
 		
 		return new DunjeonVO(floor, admfee, monNm);

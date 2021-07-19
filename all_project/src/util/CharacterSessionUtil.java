@@ -1,5 +1,6 @@
 package util;
 
+import dao.CharacterDAO;
 import vo.CharacterVO;
 
 public class CharacterSessionUtil {
@@ -13,8 +14,9 @@ public class CharacterSessionUtil {
 		return instance;
 	}
 	
-	public void setCharacter(CharacterVO vo) {
-		character = vo;
+	public void setCharacter(CharacterVO vo) throws Exception {
+		CharacterDAO dao = CharacterDAO.getCharacterDAO();
+		character = dao.showCharacterInfo(vo);
 	}
 	
 	public CharacterVO getCharacter() {
