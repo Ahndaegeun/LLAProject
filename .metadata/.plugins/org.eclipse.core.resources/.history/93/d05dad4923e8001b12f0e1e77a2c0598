@@ -1,0 +1,46 @@
+package dao;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import util.JDBCUtil;
+import vo.CharacterVO;
+import vo.DunjeonVO;
+
+public class DunjeonDAO {
+	private DunjeonDAO() {}
+	private static DunjeonDAO instance;
+	public static DunjeonDAO geDunjeonDAO() {
+		if(instance == null) {
+			instance = new DunjeonDAO();
+		}
+		return instance;
+	}
+	
+	public DunjeonVO showDunjeonInfo(CharacterVO vo) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT FLOOR,");
+		sql.append(" 	    ADMFEE,");
+		sql.append(" 	    MON_NM");
+		sql.append("   FROM DUNJEON");
+		sql.append("  WHERE FLOOR = ?");
+		
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getFloor());
+		
+		Map<String, Object> map = JDBCUtil.getInstance().selectOne(sql.toString(), list);
+		int floor = (Integer)map.get("FLOOR");
+		int admfee = (Integer)map.get("ADMFEE");
+		String monNm = (String)map.get("MON_NM");
+		
+		return new DunjeonVO(floor, admfee, monNm);
+	}
+	
+	public MonstersVO getMonster(DunjeonVO vo) {
+		
+		
+		return null;
+	}
+	
+}

@@ -3,11 +3,13 @@ package util;
 import java.util.ArrayList;
 import java.util.List;
 import controller.CharacterController;
+import controller.DunjeonConteroller;
 import controller.GameController;
 import controller.HunttingController;
 import controller.MarketController;
 import controller.UserController;
 import vo.CharacterVO;
+import vo.DunjeonVO;
 import vo.InventoryVO;
 import vo.MarketVO;
 import vo.MemberVO;
@@ -22,6 +24,7 @@ public class View {
 		GameController gameController = GameController.getController();
 		MarketController marketController = MarketController.getController();
 		HunttingController hunttingController = HunttingController.getHunttingController();
+		DunjeonConteroller dunjeonConteroller = DunjeonConteroller.geDunjeonConteroller();
 		
 		// Main Login
 		main:while (true) {
@@ -381,14 +384,90 @@ public class View {
 					break;
 				case 5:
 					System.out.println("=============== Dunjeon ===============");
+					System.out.println("1.Select Floor\t2.Back to Menu");
+					System.out.print("Input >> ");
+					input = ScanUtil.nextInt();
 					
-					
-					
-					
-					
-					
-					
-					
+					switch (input) {
+						case 1:
+							DunjeonVO dunjeon = dunjeonConteroller.showUserDunjeon(currentChar);
+							System.out.println("User Top Floor >> " + dunjeon.getFloor());
+							System.out.print("Select Floor >> ");
+							int floor = ScanUtil.nextInt();
+							if(floor > dunjeon.getFloor()) {
+								System.out.println("It's a floor you can't go to yet");
+								break;
+							}
+							System.out.println("========== Floor Infomation ==========");
+							System.out.println("Floor >> " + dunjeon.getFloor());
+							System.out.println("Admfee >> " + dunjeon.getAdmfee());
+							System.out.println("Monster Name >> " + dunjeon.getMonNm());
+							System.out.println("=================================");
+							System.out.print("Enter the dunjeon ? (1. Yes / 2. No ");
+							int enter = ScanUtil.nextInt();
+							switch (enter) {
+								case 1:
+									monster = dunjeonConteroller.getDunjeonMonster(dunjeon);
+									fighters = new ArrayList<>();	
+									fighters.add(currentChar);
+									fighters.add(monster);
+									dunjeon:while(true) {
+										CharacterVO user = gameController.getCharacterInfo(currentChar);
+										System.out.println("1.Basic Att\t2.SkillAtt");
+										input = ScanUtil.nextInt();
+										switch (input) {
+											case 1:
+												monster = hunttingController.characterBasicAtt(fighters);
+												break;
+											case 2:
+												List<SkillsVO> skillList = hunttingController.showSkillList(currentChar);
+												if(skillList.size() <= 0) {
+													System.out.println("you don't have any skills...");
+													break;
+												}
+												System.out.println("========== Skill List ==========");
+												for(SkillsVO entry : skillList) {
+													System.out.println("Skill Name >> " + entry.getSkillNm());
+												}
+												System.out.println("===========================");
+												System.out.print("Skill Name >> ");
+												String skillName = ScanUtil.nextLine();
+												monster = hunttingController.characterSkillAtt(fighters, new SkillsVO(skillName, 0, 0, 0, currentChar.getJob()));
+												
+												break;
+												
+											default:
+												System.out.println("error");
+												break;
+										}
+										if(monster.getMomHp() <= 0) {
+											break dunjeon;
+										} else {
+											System.out.println("========== Monster ==========");
+											System.out.println("Monster Name >> " + monster.getItemNm());
+											System.out.println("Monster HP >> " + monster.getMomHp());
+											System.out.println("========== User ==========");
+											System.out.println("My Hp" + user.getCharHp() + " / " + user.getCharMaxHp());
+											System.out.println("My Mp" + user.getCharMp() + " / " + user.getCharMaxMp());
+											System.out.println("========================");
+										}
+										break;
+									}
+									break;
+	
+								default:
+									System.out.println("back to menu");
+									break;
+							}
+							break;
+						case 2:
+							System.out.println("back...");
+							break;
+	
+						default:
+							System.out.println("Error");
+							break;
+					}
 					
 					break;
 				case 6:

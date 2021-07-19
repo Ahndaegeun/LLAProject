@@ -1,0 +1,22 @@
+package controller;
+
+import dao.DunjeonDAO;
+import vo.CharacterVO;
+import vo.DunjeonVO;
+
+public class DunjeonConteroller {
+	private DunjeonConteroller () {}
+	private static DunjeonConteroller instance;
+	public static DunjeonConteroller geDunjeonConteroller() {
+		if (instance == null) {
+			instance = new DunjeonConteroller();
+		}
+		return instance;
+	}
+	
+	public void showUserDunjeon(CharacterVO vo) {
+		DunjeonDAO dao = DunjeonDAO.geDunjeonDAO();
+		DunjeonVO dunjoen = dao.showDunjeonInfo(vo);
+		return dunjoen;
+	}
+}

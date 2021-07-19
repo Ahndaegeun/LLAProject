@@ -1,0 +1,14 @@
+package controller;
+
+public class DunjeonConteroller {
+	private DunjeonConteroller () {}
+	private static DunjeonConteroller instance;
+	public static DunjeonConteroller geDunjeonConteroller() {
+		if (instance == null) {
+			instance = new DunjeonConteroller();
+		}
+		return instance;
+	}
+	
+	
+}
