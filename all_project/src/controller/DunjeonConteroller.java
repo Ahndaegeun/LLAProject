@@ -1,5 +1,6 @@
 package controller;
 
+import dao.CharacterDAO;
 import dao.DunjeonDAO;
 import vo.CharacterVO;
 import vo.DunjeonVO;
@@ -23,5 +24,10 @@ public class DunjeonConteroller {
 	
 	public MonstersVO getDunjeonMonster(DunjeonVO vo) {
 		return dao.getMonster(vo);
+	}
+	
+	public boolean goUpOneFloor(CharacterVO vo) {
+		CharacterDAO dao = CharacterDAO.getCharacterDAO();
+		return dao.goUpOneFloor(vo);
 	}
 }

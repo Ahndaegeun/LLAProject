@@ -193,6 +193,7 @@ public class JDBCUtil {
 				for(int i = 0; i < param.size(); i++){
 					ps.setObject(i + 1, param.get(i));
 				}
+				
 				result = ps.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();

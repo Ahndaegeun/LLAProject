@@ -22,6 +22,7 @@ public class InventoryDAO {
 		sql.append("INSERT INTO INVENTORY VALUES (");
 		sql.append("	?,");
 		sql.append("	?,");
+		sql.append("	?,");
 		sql.append("	?");
 		sql.append(")");
 		
@@ -29,6 +30,7 @@ public class InventoryDAO {
 		list.add(vo.getItemName());
 		list.add(vo.getCharIdx());
 		list.add(vo.getItemCo());
+		list.add(vo.getDitin());
 
 		int result = JDBCUtil.getInstance().update(sql.toString(), list);
 		
@@ -42,7 +44,7 @@ public class InventoryDAO {
 	
 	public List<InventoryVO> showInventory(InventoryVO vo) throws Exception {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT *");
+		sql.append("SELECT ITEM_NM, CHAR_IDX, ITEM_CO, DITIN");
 		sql.append("  FROM INVENTORY");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
@@ -107,16 +109,18 @@ public class InventoryDAO {
 		sql.append("	   SET (CHAR_HP, CHAR_MP, CHAR_ATT, CHAR_DEF) = (SELECT I.ITEM_HP + C.CHAR_HP,");
 		sql.append("													        I.ITEM_MP + C.CHAR_MP,");
 		sql.append("													        I.ITEM_ATT + C.CHAR_ATT,");
-		sql.append("													        I.ITEM_DEF + C.CHAR_DEF,");
+		sql.append("													        I.ITEM_DEF + C.CHAR_DEF");
 		sql.append("													   FROM ITEMS I, INVENTORY IV, CHARACTERS C");
 		sql.append("													  WHERE I.ITEM_NM = IV.ITEM_NM");
 		sql.append("													    AND IV.CHAR_IDX = C.CHAR_IDX");
-		sql.append("													    AND IV.CHAR_IDX = ?)");
+		sql.append("													    AND IV.CHAR_IDX = ?");
+		sql.append("													    AND IV.ITEM_NM = ?)");
 		sql.append("	 WHERE CHAR_IDX = ?");
 		
 		
 		List<Object> list = new ArrayList<>();
 		list.add(vo.getCharIdx());
+		list.add(vo.getItemName());
 		list.add(vo.getCharIdx());
 		
 		int result = JDBCUtil.getInstance().update(sql.toString(), list);
@@ -132,17 +136,19 @@ public class InventoryDAO {
 		sql.append("UPDATE CHARACTERS");
 		sql.append("	   SET (CHAR_WEAPON , CHAR_ATT, CHAR_DEF) = (SELECT I.ITEM_NM,");
 		sql.append("												        I.ITEM_ATT + C.CHAR_ATT,");
-		sql.append("												        I.ITEM_DEF + C.CHAR_DEF,");
+		sql.append("												        I.ITEM_DEF + C.CHAR_DEF");
 		sql.append("												   FROM ITEMS I, INVENTORY IV, CHARACTERS C");
 		sql.append("												  WHERE I.ITEM_NM = IV.ITEM_NM");
 		sql.append("												    AND IV.CHAR_IDX = C.CHAR_IDX");
-		sql.append("												    AND IV.CHAR_IDX = ?)");
+		sql.append("												    AND IV.CHAR_IDX = ?");
+		sql.append("												    AND I.ITEM_NM = ?)");
 		sql.append("	 WHERE CHAR_IDX = ?");
 		
 		List<Object> list = new ArrayList<>();
 		list.add(vo.getCharIdx());
+		list.add(vo.getItemName());
 		list.add(vo.getCharIdx());
-
+		
 		int result = JDBCUtil.getInstance().update(sql.toString(), list);
 		
 		if(result > 0) {
@@ -154,19 +160,21 @@ public class InventoryDAO {
 	public boolean mountingArmor(InventoryVO vo) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE CHARACTERS");
-		sql.append("	   SET (CHAR_ARMOR , CHAR_ATT, CHAR_DEF) = (SELECT I.ITEM_NM,");
+		sql.append("	   SET (CHAR_ARMOR, CHAR_ATT, CHAR_DEF) = (SELECT I.ITEM_NM,");
 		sql.append("												       I.ITEM_ATT + C.CHAR_ATT,");
-		sql.append("												       I.ITEM_DEF + C.CHAR_DEF,");
+		sql.append("												       I.ITEM_DEF + C.CHAR_DEF");
 		sql.append("												  FROM ITEMS I, INVENTORY IV, CHARACTERS C");
 		sql.append("												 WHERE I.ITEM_NM = IV.ITEM_NM");
 		sql.append("												   AND IV.CHAR_IDX = C.CHAR_IDX");
-		sql.append("												   AND IV.CHAR_IDX = ?)");
+		sql.append("												   AND IV.CHAR_IDX = ?");
+		sql.append("												   AND I.ITEM_NM = ?)");
 		sql.append("	 WHERE CHAR_IDX = ?");
 		
 		List<Object> list = new ArrayList<>();
 		list.add(vo.getCharIdx());
+		list.add(vo.getItemName());
 		list.add(vo.getCharIdx());
-
+		
 		int result = JDBCUtil.getInstance().update(sql.toString(), list);
 		
 		if(result > 0) {

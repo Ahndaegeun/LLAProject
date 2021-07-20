@@ -1,9 +1,0 @@
-package com.all.skills;
-
-public class SkillsVO {
-	private String skillNm;
-	private int skillAtt;
-	private int skillMp;
-	private int skillLev;
-	private String job;
-}

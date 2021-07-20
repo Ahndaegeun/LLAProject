@@ -70,12 +70,17 @@ public class MarketController {
 		return true;
 	}
 	
-	public boolean insertBaord(MarketVO vo) throws Exception {
-		MarketDAO dao = MarketDAO.getMarketDAO();
-		if(dao.insertMarketItem(vo)) {
-			return true;
+	public boolean insertBaord(MarketVO marVo, CharacterVO charVo) throws Exception {
+		MarketDAO marDao = MarketDAO.getMarketDAO();
+		CharacterDAO charDao = CharacterDAO.getCharacterDAO();
+		if(charVo.getCharGold() < marVo.getMarketPrice()) {
+			return false;
 		}
-		
+		if(marDao.insertMarketItem(marVo)) {
+			if(charDao.descGold(charVo, marVo.getMarketPrice())) {
+				return true;
+			}
+		}
 		return false;
 	}
 }

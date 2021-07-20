@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="com.all.utill.ConnectionDB"/>
-    <fullyQualifiedTypeName name="java.text.DateFormat"/>
     <fullyQualifiedTypeName name="java.util.Date"/>
     <fullyQualifiedTypeName name="java.text.SimpleDateFormat"/>
     <fullyQualifiedTypeName name="com.all.signup.SignupDAO"/>
@@ -34,30 +32,32 @@
     <fullyQualifiedTypeName name="util.LoginSessionUtil"/>
     <fullyQualifiedTypeName name="util.CharacterSessionUtil"/>
     <fullyQualifiedTypeName name="controller.MarketController"/>
-    <fullyQualifiedTypeName name="dao.InventoryDAO"/>
-    <fullyQualifiedTypeName name="vo.InventoryVO"/>
     <fullyQualifiedTypeName name="vo.MarketVO"/>
     <fullyQualifiedTypeName name="dao.MarketDAO"/>
-    <fullyQualifiedTypeName name="java.util.Random"/>
     <fullyQualifiedTypeName name="util.View"/>
-    <fullyQualifiedTypeName name="dao.MonstersDAO"/>
     <fullyQualifiedTypeName name="controller.GameController"/>
     <fullyQualifiedTypeName name="vo.SkillsVO"/>
     <fullyQualifiedTypeName name="dao.SkillsDAO"/>
     <fullyQualifiedTypeName name="controller.HunttingController"/>
     <fullyQualifiedTypeName name="java.lang.System"/>
-    <fullyQualifiedTypeName name="java.util.List"/>
-    <fullyQualifiedTypeName name="java.util.Map"/>
     <fullyQualifiedTypeName name="dao.DunjeonDAO"/>
     <fullyQualifiedTypeName name="controller.DunjeonConteroller"/>
     <fullyQualifiedTypeName name="vo.DunjeonVO"/>
     <fullyQualifiedTypeName name="java.lang.Integer"/>
-    <fullyQualifiedTypeName name="vo.MonstersVO"/>
-    <fullyQualifiedTypeName name="dao.CharacterDAO"/>
     <fullyQualifiedTypeName name="com.sun.tools.classfile.StackMapTable_attribute.chop_frame"/>
-    <fullyQualifiedTypeName name="vo.CharacterVO"/>
-    <fullyQualifiedTypeName name="util.ScanUtil"/>
+    <fullyQualifiedTypeName name="java.util.Random"/>
+    <fullyQualifiedTypeName name="vo.MonstersVO"/>
+    <fullyQualifiedTypeName name="dao.MonstersDAO"/>
+    <fullyQualifiedTypeName name="dao.InventoryDAO"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="dao.ItemDAO"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="vo.ItemVO"/>
+    <fullyQualifiedTypeName name="dao.CharacterDAO"/>
     <fullyQualifiedTypeName name="java.lang.StringBuilder"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="util.JDBCUtil"/>
+    <fullyQualifiedTypeName name="util.ScanUtil"/>
+    <fullyQualifiedTypeName name="vo.CharacterVO"/>
+    <fullyQualifiedTypeName name="vo.InventoryVO"/>
 </qualifiedTypeNameHistroy>

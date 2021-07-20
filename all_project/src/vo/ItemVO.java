@@ -16,6 +16,21 @@ public class ItemVO {
 		this.itemDef = itemDef;
 		this.ditin = ditin;
 	}
+	
+	
+
+	public ItemVO(String itemName) {
+		super();
+		this.itemName = itemName;
+	}
+	
+	public ItemVO(String itemName, String ditin) {
+		super();
+		this.itemName = itemName;
+		this.ditin = ditin;
+	}
+
+
 
 	public String getItemName() {
 		return itemName;

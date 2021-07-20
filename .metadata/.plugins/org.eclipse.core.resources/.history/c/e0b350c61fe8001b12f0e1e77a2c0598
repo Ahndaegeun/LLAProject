@@ -1,9 +1,0 @@
-package vo;
-
-public class DunjeonVO {
-	private int floor;
-	private int admfee;
-	private String monNm;
-	
-	
-}

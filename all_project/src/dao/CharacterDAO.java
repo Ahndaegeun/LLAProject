@@ -2,6 +2,7 @@ package dao;
 
 import util.JDBCUtil;
 import vo.CharacterVO;
+import vo.ItemVO;
 import vo.MemberVO;
 import vo.SkillsVO;
 
@@ -192,14 +193,12 @@ public class CharacterDAO {
 	
 	public boolean beingAtt(CharacterVO vo, double damage) throws Exception {
 		List<Object> list = new ArrayList<>();
-		int newHp = (int)(vo.getCharHp() - (damage - vo.getCharDef()));
-		
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE CHARACTERS");
-		sql.append("   SET CHAR_HP = ?");
+		sql.append("   SET CHAR_HP = CHAR_HP - ?");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
-		list.add(newHp);
+		list.add((int)(damage / 10));
 		list.add(vo.getCharIdx());
 		result = jdbc.update(sql.toString(), list);
 		
@@ -226,21 +225,58 @@ public class CharacterDAO {
 		return false;
 	}
 	
-	public boolean addItem(CharacterVO vo, String item) throws Exception {
+	public boolean descGold(CharacterVO vo, int gold) {
 		List<Object> list = new ArrayList<>();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO INVENTORY VALUES (");
-		sql.append(" 	?,");
-		sql.append(" 	?,");
-		sql.append(" 	1)");
+		sql.append("UPDATE CHARACTERS");
+		sql.append("   SET CHAR_GOLD = ?");
+		sql.append(" WHERE CHAR_IDX = ?");
 		
-		list.add(item);
+		list.add(vo.getCharGold() - gold);
 		list.add(vo.getCharIdx());
 		result = jdbc.update(sql.toString(), list);
 		
 		if(result > 0) {
 			return true;
 		}
+		return false;
+	}
+	
+	public boolean addItem(CharacterVO vo, ItemVO item){
+		List<Object> list = new ArrayList<>();
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO INVENTORY VALUES (");
+		sql.append(" 	?,");
+		sql.append(" 	?,");
+		sql.append(" 	1,");
+		sql.append(" 	?)");
+		
+		list.add(item.getItemName());
+		list.add(vo.getCharIdx());
+		list.add(item.getDitin());
+		
+		result = jdbc.update(sql.toString(), list);
+		
+		if(result > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean increaseItem(CharacterVO vo) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE INVENTORY ");
+		sql.append("   SET ITEM_CO = ITEM_CO + 1");
+		sql.append(" WHERE CHAR_IDX = ?");
+		
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getCharIdx());
+		
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		if(result > 0) {
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -432,6 +468,24 @@ public class CharacterDAO {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean goUpOneFloor(CharacterVO vo) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE CHARACTERS");
+		sql.append("   SET FLOOR = FLOOR + 1");
+		sql.append(" WHERE CHAR_IDX = ?");
+		
+		List<Object> list = new ArrayList<>();
+		list.add(vo.getCharIdx());
+		
+		int result = JDBCUtil.getInstance().update(sql.toString(), list);
+		
+		if(result > 0) {
+			return true;
+		}
+		return false;
+		
 	}
 	
 }

@@ -41,12 +41,12 @@ public class DunjeonDAO {
 	public MonstersVO getMonster(DunjeonVO vo) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT M.MON_NM,");
-		sql.append(" 	    M.MON_HP,");
-		sql.append(" 	    M.MON_ATT,");
-		sql.append(" 	    M.MON_DEF,");
-		sql.append(" 	    M.MON_GOLD");
-		sql.append(" 	    M.MON_LEV,");
-		sql.append(" 	    M.ITEM_NM");
+		sql.append(" 	    MON_HP,");
+		sql.append(" 	    MON_ATT,");
+		sql.append(" 	    MON_DEF,");
+		sql.append(" 	    MON_GOLD,");
+		sql.append(" 	    MON_LEV,");
+		sql.append(" 	    ITEM_NM");
 		sql.append("   FROM MONSTERS M, DUNJEON D");
 		sql.append("  WHERE M.MON_NM = D.MON_NM");
 		sql.append("    AND D.FLOOR = ?");
@@ -56,11 +56,11 @@ public class DunjeonDAO {
 		
 		Map<String, Object> map = JDBCUtil.getInstance().selectOne(sql.toString(), list);
 		String name = (String)map.get("MON_NM");
-		int hp = (Integer)map.get("MON_HP");
-		int att = (Integer)map.get("MON_ATT");
-		int def = (Integer)map.get("MON_DEF");
-		int gold = (Integer)map.get("MON_GOLD");
-		int lev = (Integer)map.get("MON_LEV");
+		int hp = Integer.parseInt(map.get("MON_HP") + "");
+		int att = Integer.parseInt(map.get("MON_ATT") + "");
+		int def = Integer.parseInt(map.get("MON_DEF") + "");
+		int gold = Integer.parseInt(map.get("MON_GOLD") + "");
+		int lev = Integer.parseInt(map.get("MON_LEV") + "");
 		String item = (String)map.get("MON_NM");
 		
 		MonstersVO monster = new MonstersVO(name, hp, att, def, gold, lev, item);

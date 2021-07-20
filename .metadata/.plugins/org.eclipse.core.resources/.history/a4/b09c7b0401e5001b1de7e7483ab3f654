@@ -1,8 +1,0 @@
-package com.all.signup;
-
-public class Test {
-	public static void main(String[] args) {
-		SignupDAO dao = new SignupDAO();
-		System.out.println(dao.ageCheck("950807"));
-	}
-}

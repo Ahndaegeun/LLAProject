@@ -80,7 +80,7 @@ public class HunttingController {
 	}
 	
 	public boolean getExe(CharacterVO charVo, MonstersVO monVo) throws Exception {
-		return charDao.getExe(charVo, (monVo.getMomLev() * 10));
+		return charDao.getExe(charVo, (monVo.getMomLev() * 30));
 	}
 }
 
