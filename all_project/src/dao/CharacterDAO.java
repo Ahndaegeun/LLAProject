@@ -266,9 +266,9 @@ public class CharacterDAO {
 		list.add(charVo.getCharIdx());
 		Map<String, Object> result = jdbc.selectOne(sql.toString(), list);
 		
-		SkillsVO skill = new SkillsVO((String)result.get("S.SKILL_NM"), Integer.parseInt(result.get("S.SKILL_ATT") + ""),
-				Integer.parseInt(result.get("S.SKILL_MP") + ""), 
-				Integer.parseInt(result.get("S.SKILL_LEV") + ""),(String)result.get("S.JOB"));
+		SkillsVO skill = new SkillsVO((String)result.get("SKILL_NM"), Integer.parseInt(result.get("SKILL_ATT") + ""),
+				Integer.parseInt(result.get("SKILL_MP") + ""), 
+				Integer.parseInt(result.get("SKILL_LEV") + ""),(String)result.get("JOB"));
 		
 		return skill;
 	}
@@ -302,7 +302,7 @@ public class CharacterDAO {
 		sql.append("   SET CHAR_EXE = ?");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
-		list.add(vo.getCharMaxExe() + exe);
+		list.add(vo.getCharExe() + exe);
 		list.add(vo.getCharIdx());
 		result = jdbc.update(sql.toString(), list);
 		
@@ -332,7 +332,7 @@ public class CharacterDAO {
 		sql.append("        CHAR_DEF, ");
 		sql.append("        CHAR_EXE, ");
 		sql.append("        CHAR_MAX_EXE, ");
-		sql.append("        CHAR_LEV) = (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append("        CHAR_LEV) = (SELECT ?, ?, ?, ?, ?, ?, ?, ?, ? FROM DUAL)");
 		sql.append(" WHERE CHAR_IDX = ?");
 		
 		list.add(newHp);
@@ -355,6 +355,22 @@ public class CharacterDAO {
 	}
 	
 	public boolean changeClass(CharacterVO vo, String job) {
+		int hp = vo.getCharMaxHp();
+		int mp = vo.getCharMaxMp();
+		int att = vo.getCharAtt();
+		int def = vo.getCharDef();
+		
+		if(job.equals("전사")) {
+			hp *= 1.3;
+			def *= 1.3;
+		} else if (job.equals("마법사")) {
+			mp *= 1.3;
+			att *= 1.3;
+		} else if (job.equals("도적")) {
+			hp *= 1.3;
+			att *= 1.3;
+		}
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE CHARACTERS");
 		sql.append("   SET (CHAR_HP, ");
@@ -377,6 +393,15 @@ public class CharacterDAO {
 		sql.append(" WHERE CHAR_IDX = ?");
 		
 		List<Object> list = new ArrayList<>();
+		list.add(hp);
+		list.add(hp);
+		list.add(mp);
+		list.add(mp);
+		list.add(att);
+		list.add(def);
+		list.add(job);
+		list.add(vo.getCharIdx());
+		
 		if(JDBCUtil.getInstance().update(sql.toString(), list) > 0) {
 			return true;
 		}
@@ -408,6 +433,5 @@ public class CharacterDAO {
 		}
 		return false;
 	}
-	
 	
 }

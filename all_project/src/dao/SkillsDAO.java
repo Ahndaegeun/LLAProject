@@ -40,9 +40,9 @@ public class SkillsDAO {
 		for(Map<String, Object> entry : map) {
 			SkillsVO skill = new SkillsVO();
 			skill.setSkillNm((String)entry.get("SKILL_NM"));
-			skill.setSkillAtt((Integer)entry.get("SKILL_ATT"));
-			skill.setSkillMp((Integer)entry.get("SKILL_MP"));
-			skill.setSkillLev((Integer)entry.get("SKILL_LEV"));
+			skill.setSkillAtt(Integer.parseInt(entry.get("SKILL_ATT") + ""));
+			skill.setSkillMp(Integer.parseInt(entry.get("SKILL_MP") + ""));
+			skill.setSkillLev(Integer.parseInt(entry.get("SKILL_LEV") + ""));
 			skill.setJob((String)entry.get("JOB_NM"));
 			skillList.add(skill);
 		}

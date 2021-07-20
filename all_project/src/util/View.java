@@ -363,6 +363,7 @@ public class View {
 						switch (input) {
 							case 1:
 								monster = hunttingController.characterBasicAtt(fighters);
+								user = gameController.getCharacterInfo(currentChar);
 								break;
 							case 2:
 								List<SkillsVO> skillList = hunttingController.showSkillList(currentChar);
@@ -379,7 +380,7 @@ public class View {
 								System.out.print("Skill Name >> ");
 								String skillName = ScanUtil.nextLine();
 								monster = hunttingController.characterSkillAtt(fighters, new SkillsVO(skillName, 0, 0, 0, currentChar.getJob()));
-								
+								user = gameController.getCharacterInfo(currentChar);
 								break;
 							case 3:
 								if(hunttingController.run()) {
@@ -395,14 +396,20 @@ public class View {
 						if(monster.getMomHp() <= 0) {
 							System.out.println("Monster Die");
 							System.out.println();
+							int beforLev = currentChar.getCharLevel();
 							hunttingController.getExe(currentChar, monster);
-							if(characterController.levelCheck(currentChar)) {
+							if(characterController.levelCheck(gameController.getCharacterInfo(currentChar))) {
 								System.out.println("1.전사\t2.마법사\t3.도적");
 								String job = ScanUtil.nextLine();
 								characterController.changeClass(currentChar, job);
 							}
+							int afterLev = gameController.getCharacterInfo(currentChar).getCharLevel();
+							if(beforLev < afterLev) {
+								System.out.println("Level Up");
+							}
 							break huntting;
 						} else if(currentChar.getCharHp() <= 0) {
+							
 							System.out.println("You Die");
 							System.out.println();
 							hunttingController.userDie(currentChar);
@@ -448,18 +455,23 @@ public class View {
 									fighters = new ArrayList<>();	
 									fighters.add(currentChar);
 									fighters.add(monster);
+									//
 									dunjeon:while(true) {
+										fighters.add(1, monster);
 										CharacterVO user = gameController.getCharacterInfo(currentChar);
-										System.out.println("1.Basic Att\t2.SkillAtt");
+										
+										System.out.println("1.Basic Att\t2.SkillAtt\t3.run");
 										input = ScanUtil.nextInt();
 										switch (input) {
 											case 1:
 												monster = hunttingController.characterBasicAtt(fighters);
+												user = gameController.getCharacterInfo(currentChar);
 												break;
 											case 2:
 												List<SkillsVO> skillList = hunttingController.showSkillList(currentChar);
 												if(skillList.size() <= 0) {
 													System.out.println("you don't have any skills...");
+													System.out.println();
 													break;
 												}
 												System.out.println("========== Skill List ==========");
@@ -470,9 +482,15 @@ public class View {
 												System.out.print("Skill Name >> ");
 												String skillName = ScanUtil.nextLine();
 												monster = hunttingController.characterSkillAtt(fighters, new SkillsVO(skillName, 0, 0, 0, currentChar.getJob()));
-												
+												user = gameController.getCharacterInfo(currentChar);
 												break;
-												
+											case 3:
+												if(hunttingController.run()) {
+													break dunjeon;
+												}
+												System.out.println("fail");
+												break;
+					
 											default:
 												System.out.println("error");
 												break;
@@ -480,14 +498,20 @@ public class View {
 										if(monster.getMomHp() <= 0) {
 											System.out.println("Monster Die");
 											System.out.println();
+											int beforLev = currentChar.getCharLevel();
 											hunttingController.getExe(currentChar, monster);
-											if(characterController.levelCheck(currentChar)) {
+											if(characterController.levelCheck(gameController.getCharacterInfo(currentChar))) {
 												System.out.println("1.전사\t2.마법사\t3.도적");
 												String job = ScanUtil.nextLine();
 												characterController.changeClass(currentChar, job);
 											}
+											int afterLev = gameController.getCharacterInfo(currentChar).getCharLevel();
+											if(beforLev < afterLev) {
+												System.out.println("Level Up");
+											}
 											break dunjeon;
 										} else if(currentChar.getCharHp() <= 0) {
+											
 											System.out.println("You Die");
 											System.out.println();
 											hunttingController.userDie(currentChar);
@@ -502,8 +526,8 @@ public class View {
 											System.out.println("========================");
 											System.out.println();
 										}
-										break;
 									}
+									
 									break;
 	
 								default:
